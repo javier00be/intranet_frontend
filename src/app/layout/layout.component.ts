@@ -22,17 +22,20 @@ interface MenuItem {
   imports: [CommonModule, RouterModule, ButtonModule, AvatarModule, MenuModule, RippleModule, TooltipModule],
   template: `
     <div class="layout" [class.dark-mode]="themeService.darkMode()">
+
+      <!-- Sidebar -->
       <aside class="sidebar" [class.collapsed]="sidebarCollapsed()">
         <div class="sidebar-header">
           @if (!sidebarCollapsed()) {
             <div class="logo">
-              <i class="pi pi-school"></i>
-              <span>Intranet</span>
+              <div class="logo-mark">AE</div>
+              <div class="logo-text">
+                Albert Einstein
+                <small>Intranet · 2026</small>
+              </div>
             </div>
-          } @else {
-            <i class="pi pi-school logo-collapsed"></i>
           }
-          <button class="toggle-btn" (click)="toggleSidebar()">
+          <button class="toggle-btn" (click)="toggleSidebar()" [title]="sidebarCollapsed() ? 'Expandir' : 'Colapsar'">
             <i class="pi" [class.pi-angle-left]="!sidebarCollapsed()" [class.pi-angle-right]="sidebarCollapsed()"></i>
           </button>
         </div>
@@ -40,8 +43,8 @@ interface MenuItem {
         <nav class="sidebar-menu">
           @for (item of menuItems(); track item.label) {
             @if (!item.items) {
-              <a 
-                [routerLink]="item.routerLink" 
+              <a
+                [routerLink]="item.routerLink"
                 routerLinkActive="active"
                 class="menu-item"
                 [pTooltip]="sidebarCollapsed() ? item.label : ''"
@@ -53,25 +56,21 @@ interface MenuItem {
               </a>
             } @else {
               <div class="menu-group">
-                <div class="menu-group-header">
-                  <i class="pi" [class]="item.icon"></i>
-                  @if (!sidebarCollapsed()) {
-                    <span>{{ item.label }}</span>
-                    <i class="pi pi-chevron-down"></i>
-                  }
-                </div>
                 @if (!sidebarCollapsed()) {
-                  <div class="submenu">
-                    @for (sub of item.items; track sub.label) {
-                      <a 
-                        [routerLink]="sub.routerLink" 
-                        routerLinkActive="active"
-                        class="submenu-item">
-                        <i class="pi" [class]="sub.icon"></i>
-                        <span>{{ sub.label }}</span>
-                      </a>
+                  <div class="menu-section-title">{{ item.label }}</div>
+                }
+                @for (sub of item.items; track sub.label) {
+                  <a
+                    [routerLink]="sub.routerLink"
+                    routerLinkActive="active"
+                    class="menu-item"
+                    [pTooltip]="sidebarCollapsed() ? sub.label : ''"
+                    tooltipPosition="right">
+                    <i class="pi" [class]="sub.icon"></i>
+                    @if (!sidebarCollapsed()) {
+                      <span>{{ sub.label }}</span>
                     }
-                  </div>
+                  </a>
                 }
               </div>
             }
@@ -80,280 +79,54 @@ interface MenuItem {
 
         <div class="sidebar-footer">
           @if (authService.user(); as user) {
-            <div class="user-info" [class.collapsed]="sidebarCollapsed()">
-              <p-avatar 
-                [image]="user.avatar" 
-                shape="circle" 
-                size="large" />
+            <div class="user-info" [class.collapsed]="sidebarCollapsed()" (click)="logout()" title="Cerrar sesión">
+              <p-avatar
+                [label]="userInitials()"
+                shape="circle"
+                [style]="{ background: 'var(--accent)', color: 'white', fontWeight: '500' }" />
               @if (!sidebarCollapsed()) {
                 <div class="user-details">
                   <span class="user-name">{{ user.nombre }} {{ user.apellido }}</span>
                   <span class="user-role">{{ user.rol | titlecase }}</span>
                 </div>
+                <i class="pi pi-chevron-right" style="color: var(--ink-4); font-size: 12px;"></i>
               }
             </div>
           }
-          <p-button 
-            icon="pi pi-sign-out" 
-            [pTooltip]="sidebarCollapsed() ? 'Cerrar Sesión' : ''"
-            tooltipPosition="right"
-            [text]="true" 
-            severity="secondary"
-            (onClick)="logout()"
-            [disabled]="sidebarCollapsed()" />
         </div>
       </aside>
 
+      <!-- Main -->
       <main class="main-content">
         <header class="topbar">
-          <div class="breadcrumb">
-            <span class="page-title">{{ currentPageTitle() }}</span>
+          <div class="topbar-title">
+            <div class="page-title">{{ currentPageTitle() }}</div>
           </div>
+
+          <div class="topbar-search">
+            <i class="pi pi-search"></i>
+            <input type="text" placeholder="Buscar en la intranet…" />
+            <span class="topbar-kbd">Ctrl K</span>
+          </div>
+
           <div class="topbar-actions">
-            <p-button 
-              [icon]="themeService.darkMode() ? 'pi pi-sun' : 'pi pi-moon'" 
-              [text]="true" 
-              severity="secondary"
-              pTooltip="Cambiar tema"
-              (onClick)="themeService.toggle()" />
-            <p-button icon="pi pi-bell" [text]="true" severity="secondary" pTooltip="Notificaciones" />
-            <p-button icon="pi pi-cog" [text]="true" severity="secondary" pTooltip="Configuración" />
+            <button class="icon-btn" (click)="themeService.toggle()" [title]="themeService.darkMode() ? 'Modo claro' : 'Modo oscuro'">
+              <i class="pi" [class.pi-sun]="themeService.darkMode()" [class.pi-moon]="!themeService.darkMode()"></i>
+            </button>
+            <button class="icon-btn" title="Notificaciones">
+              <i class="pi pi-bell"></i>
+            </button>
           </div>
         </header>
+
         <div class="content">
           <router-outlet />
         </div>
       </main>
+
     </div>
   `,
-  styles: [`
-    .layout {
-      display: flex;
-      min-height: 100vh;
-      background: #f8f9fa;
-    }
-
-    .sidebar {
-      width: 260px;
-      background: linear-gradient(180deg, #1e3a5f 0%, #2d4a6f 100%);
-      display: flex;
-      flex-direction: column;
-      transition: width 0.3s ease;
-      position: fixed;
-      height: 100vh;
-      z-index: 100;
-    }
-
-    .sidebar.collapsed {
-      width: 70px;
-    }
-
-    .sidebar-header {
-      padding: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      color: white;
-    }
-
-    .logo i {
-      font-size: 1.5rem;
-    }
-
-    .logo span {
-      font-size: 1.25rem;
-      font-weight: 700;
-    }
-
-    .logo-collapsed {
-      font-size: 1.5rem;
-      color: white;
-    }
-
-    .toggle-btn {
-      background: none;
-      border: none;
-      color: rgba(255,255,255,0.7);
-      cursor: pointer;
-      padding: 0.5rem;
-      border-radius: 4px;
-      transition: all 0.2s;
-    }
-
-    .toggle-btn:hover {
-      color: white;
-      background: rgba(255,255,255,0.1);
-    }
-
-    .sidebar-menu {
-      flex: 1;
-      padding: 1rem 0.5rem;
-      overflow-y: auto;
-    }
-
-    .menu-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1rem;
-      color: rgba(255,255,255,0.8);
-      text-decoration: none;
-      border-radius: 8px;
-      margin-bottom: 0.25rem;
-      transition: all 0.2s;
-    }
-
-    .menu-item:hover {
-      background: rgba(255,255,255,0.1);
-      color: white;
-    }
-
-    .menu-item.active {
-      background: rgba(255,255,255,0.2);
-      color: white;
-      font-weight: 600;
-    }
-
-    .menu-item i {
-      font-size: 1.1rem;
-      width: 20px;
-    }
-
-    .menu-group {
-      margin-bottom: 0.5rem;
-    }
-
-    .menu-group-header {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1rem;
-      color: rgba(255,255,255,0.6);
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .menu-group-header i:first-child {
-      font-size: 1.1rem;
-    }
-
-    .menu-group-header span {
-      flex: 1;
-    }
-
-    .menu-group-header i:last-child {
-      font-size: 0.75rem;
-    }
-
-    .submenu {
-      padding-left: 1rem;
-    }
-
-    .submenu-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.5rem 1rem;
-      color: rgba(255,255,255,0.7);
-      text-decoration: none;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-    }
-
-    .submenu-item:hover {
-      background: rgba(255,255,255,0.1);
-      color: white;
-    }
-
-    .submenu-item.active {
-      background: rgba(255,255,255,0.15);
-      color: white;
-    }
-
-    .submenu-item i {
-      font-size: 0.9rem;
-    }
-
-    .sidebar-footer {
-      padding: 1rem;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex: 1;
-      overflow: hidden;
-    }
-
-    .user-info.collapsed {
-      justify-content: center;
-    }
-
-    .user-details {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .user-name {
-      color: white;
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-
-    .user-role {
-      color: rgba(255,255,255,0.6);
-      font-size: 0.75rem;
-    }
-
-    .main-content {
-      flex: 1;
-      margin-left: 260px;
-      transition: margin-left 0.3s ease;
-    }
-
-    .sidebar.collapsed + .main-content {
-      margin-left: 70px;
-    }
-
-    .topbar {
-      height: 60px;
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1.5rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .page-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #1e3a5f;
-    }
-
-    .topbar-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .content {
-      padding: 1.5rem;
-    }
-  `]
+  styles: [``]
 })
 export class LayoutComponent {
   authService = inject(AuthService);
@@ -368,11 +141,11 @@ export class LayoutComponent {
     
     if (rol === 'director') {
       return [
-        { label: 'Dashboard', icon: 'pi-home', routerLink: '/dashboard' },
-        { label: 'Pagos', icon: 'pi-wallet', routerLink: '/director/pagos' },
-        { label: 'Cursos', icon: 'pi-book', routerLink: '/director/cursos' },
-        { label: 'Profesores', icon: 'pi-users', routerLink: '/director/profesores' },
-        { label: 'Reportes', icon: 'pi-chart-bar', routerLink: '/director/reportes' }
+        { label: 'Dashboard',  icon: 'pi-home',      routerLink: '/director/dashboard'  },
+        { label: 'Pagos',      icon: 'pi-wallet',     routerLink: '/director/pagos'      },
+        { label: 'Cursos',     icon: 'pi-book',       routerLink: '/director/cursos'     },
+        { label: 'Profesores', icon: 'pi-users',      routerLink: '/director/profesores' },
+        { label: 'Reportes',   icon: 'pi-chart-bar',  routerLink: '/director/reportes'   }
       ];
     }
     
@@ -387,6 +160,17 @@ export class LayoutComponent {
       ];
     }
     
+    if (rol === 'padre') {
+      return [
+        { label: 'Dashboard',   icon: 'pi-home',      routerLink: '/padre/dashboard'    },
+        { label: 'Mis Hijos',   icon: 'pi-users',     routerLink: '/padre/hijos'        },
+        { label: 'Calificaciones', icon: 'pi-star',   routerLink: '/padre/calificaciones' },
+        { label: 'Asistencia',  icon: 'pi-calendar',  routerLink: '/padre/asistencia'   },
+        { label: 'Pagos',       icon: 'pi-wallet',    routerLink: '/padre/pagos'        },
+        { label: 'Chat',        icon: 'pi-comments',  routerLink: '/padre/chat'         }
+      ];
+    }
+
     if (rol === 'estudiante') {
       return [
         { label: 'Dashboard', icon: 'pi-home', routerLink: '/dashboard' },
@@ -406,7 +190,13 @@ export class LayoutComponent {
     
     if (url.includes('dashboard')) {
       const rol = user?.rol || '';
-      return `Dashboard - ${rol.charAt(0).toUpperCase() + rol.slice(1)}`;
+      const labels: Record<string, string> = {
+        director: 'Panel de Dirección',
+        profesor: 'Panel del Profesor',
+        padre: 'Panel del Padre',
+        estudiante: 'Panel del Estudiante'
+      };
+      return labels[rol] ?? 'Dashboard';
     }
     if (url.includes('pagos')) return 'Gestión de Pagos';
     if (url.includes('/director/cursos')) return 'Administración de Cursos';
@@ -422,6 +212,12 @@ export class LayoutComponent {
     if (url.includes('/estudiante/calendario')) return 'Calendario';
     if (url.includes('/estudiante/notas')) return 'Mis Notas';
     return 'Intranet Escolar';
+  });
+
+  userInitials = computed(() => {
+    const user = this.authService.user();
+    if (!user) return '?';
+    return `${user.nombre?.[0] ?? ''}${user.apellido?.[0] ?? ''}`.toUpperCase();
   });
 
   toggleSidebar(): void {

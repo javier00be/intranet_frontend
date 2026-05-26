@@ -1,38 +1,38 @@
 <div class="login-page">
+
+  <!-- Left: branding panel -->
   <div class="login-left">
-    <div class="brand-content">
-      <div class="brand-logo">
-        <i class="pi pi-building"></i>
+    <div class="login-brand">
+      <div class="login-logo">AE</div>
+      <div class="login-brand-text">
+        Colegio Albert Einstein
+        <small>Lima · Perú</small>
       </div>
-      <h1>Intranet Escolar</h1>
-      <p>Plataforma de gestión educativa para escuelas modernas</p>
-      
-      <div class="features-list">
-        <div class="feature-item">
-          <i class="pi pi-check-circle"></i>
-          <span>Gestión académica integral</span>
-        </div>
-        <div class="feature-item">
-          <i class="pi pi-check-circle"></i>
-          <span>Control de asistencia y notas</span>
-        </div>
-        <div class="feature-item">
-          <i class="pi pi-check-circle"></i>
-          <span>Comunicación entre padres y profesores</span>
-        </div>
-        <div class="feature-item">
-          <i class="pi pi-check-circle"></i>
-          <span>Reportes y estadísticas en tiempo real</span>
-        </div>
-      </div>
+    </div>
+
+    <div class="login-tagline">
+      <h1>
+        Una comunidad <em>educativa</em> conectada.
+      </h1>
+      <p>
+        Estudiantes, profesores, padres y administración en un solo lugar.
+        Bienvenido a la intranet de Albert Einstein.
+      </p>
+    </div>
+
+    <div class="login-meta">
+      <span>v2.4 · Año académico 2026</span>
+      <span>·</span>
+      <span>Soporte: ti&#64;aeinstein.edu.pe</span>
     </div>
   </div>
 
+  <!-- Right: login form -->
   <div class="login-right">
     <div class="login-form-container">
       <div class="form-header">
-        <h2>Bienvenido</h2>
-        <p>Ingresa tus credenciales para acceder al sistema</p>
+        <h2>Iniciar sesión</h2>
+        <p>Ingresa con tus credenciales institucionales.</p>
       </div>
 
       @if (error()) {
@@ -42,37 +42,37 @@
       <div class="form-fields">
         <div class="field-container">
           <label for="email">Correo electrónico</label>
-          <input 
-            pInputText 
-            id="email" 
-            [(ngModel)]="email" 
-            placeholder="correo@escuela.com" 
+          <input
+            pInputText
+            id="email"
+            [(ngModel)]="email"
+            placeholder="usuario.apellido&#64;aeinstein.edu.pe"
             class="w-full" />
         </div>
 
         <div class="field-container">
           <label for="password">Contraseña</label>
-          <p-password 
-            id="password" 
-            [(ngModel)]="password" 
-            [feedback]="false" 
-            [toggleMask]="true" 
-            placeholder="••••••••" 
-            class="w-full" 
+          <p-password
+            id="password"
+            [(ngModel)]="password"
+            [feedback]="false"
+            [toggleMask]="true"
+            placeholder="••••••••••"
+            class="w-full"
             inputStyleClass="w-full"
             styleClass="w-full" />
         </div>
-
-        <div class="form-options">
-          <a routerLink="/auth/forgot-password" class="forgot-link">¿Olvidaste tu contraseña?</a>
-        </div>
       </div>
 
-      <p-button 
-        label="Iniciar Sesión" 
-        (onClick)="onLogin()" 
-        [loading]="authService.isLoading()" 
-        styleClass="w-full login-btn" 
+      <div class="form-options">
+        <a routerLink="/auth/forgot-password" class="forgot-link">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <p-button
+        label="Entrar"
+        (onClick)="onLogin()"
+        [loading]="authService.isLoading()"
+        styleClass="w-full login-btn"
         size="large" />
 
       <p-divider align="center">
@@ -95,9 +95,10 @@
       </div>
 
       <div class="register-prompt">
-        <span>¿No tienes cuenta?</span>
-        <a routerLink="/auth/register" class="register-link">Regístrate aquí</a>
+        <span>¿No tenés cuenta?</span>
+        <a routerLink="/auth/register" class="register-link">Registrate aquí</a>
       </div>
     </div>
   </div>
+
 </div>

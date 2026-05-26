@@ -8,8 +8,8 @@ const API_URL = environment.apiUrl;
 
 function mapRole(rol: string): UserRole {
   const normalized = rol.toLowerCase();
-  if (normalized === 'director' || normalized === 'profesor' || normalized === 'estudiante') {
-    return normalized;
+  if (normalized === 'director' || normalized === 'profesor' || normalized === 'padre' || normalized === 'estudiante') {
+    return normalized as UserRole;
   }
   return 'estudiante';
 }
