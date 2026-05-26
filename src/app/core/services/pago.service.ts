@@ -6,13 +6,11 @@ import { environment } from '../../../environments/environment';
 export interface Pago {
   id?: number;
   estudianteId: number;
-  estudianteNombre?: string;
-  grado?: string;
-  concepto: string;
   monto: number;
-  fecha: string;
-  metodo: string;
+  concepto: string;
+  fechaPago?: string;
   estado: string;
+  metodoPago?: string;
 }
 
 @Injectable({ providedIn: 'root' })

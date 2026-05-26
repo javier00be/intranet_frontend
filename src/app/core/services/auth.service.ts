@@ -176,6 +176,31 @@ export class AuthService {
     }
   }
 
+  async adminRegisterUser(data: {
+    email: string;
+    password: string;
+    nombre: string;
+    apellido: string;
+    rol: 'PROFESOR' | 'PADRE';
+  }): Promise<{success: boolean; userId?: number; message?: string}> {
+    try {
+      const response = await this.http.post<BackendAuthResponse>(`${API_URL}/api/auth/register`, {
+        email: data.email,
+        password: data.password,
+        nombre: data.nombre,
+        apellido: data.apellido,
+        rol: data.rol
+      }).toPromise();
+
+      if (response?.success && response.user) {
+        return {success: true, userId: response.user.id};
+      }
+      return {success: false, message: response?.message || 'Error al crear usuario'};
+    } catch (error: any) {
+      return {success: false, message: error.error?.message || 'Error de conexión'};
+    }
+  }
+
   isLoggedIn(): boolean {
     return this.isAuthenticated();
   }

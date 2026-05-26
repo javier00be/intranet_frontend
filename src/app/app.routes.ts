@@ -62,6 +62,12 @@ export const routes: Routes = [
         data: { roles: ['director'] }
       },
       {
+        path: 'director/padres',
+        loadComponent: () => import('./features/director/padres/padres.component').then(m => m.PadresComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['director'] }
+      },
+      {
         path: 'director/reportes',
         loadComponent: () => import('./features/director/reportes/reportes.component').then(m => m.ReportesComponent),
         canActivate: [roleGuard],

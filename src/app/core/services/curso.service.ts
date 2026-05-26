@@ -3,16 +3,19 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+export type NivelEducativo = 'INICIAL' | 'PRIMARIA' | 'SECUNDARIA';
+
 export interface Curso {
   id?: number;
-  codigo: string;
   nombre: string;
-  categoria: string;
-  grado: string;
+  descripcion?: string;
+  nivel: NivelEducativo;
+  grados: number[];
+  seccion?: string;
   profesorId?: number;
-  capacidad: number;
-  matriculados: number;
-  estado: string;
+  profesorNombre?: string;
+  anio?: number;
+  activo?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -38,5 +41,9 @@ export class CursoService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  reactivate(id: number): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/${id}/reactivar`, {});
   }
 }

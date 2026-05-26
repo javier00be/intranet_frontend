@@ -1,5 +1,14 @@
 export type UserRole = 'director' | 'profesor' | 'padre' | 'estudiante';
 
+export interface UsuarioInfo {
+  id?: number;
+  email?: string;
+  nombre?: string;
+  apellido?: string;
+  rol?: string;
+  avatar?: string;
+}
+
 export interface User {
   id: number;
   email: string;

@@ -145,6 +145,7 @@ export class LayoutComponent {
         { label: 'Pagos',      icon: 'pi-wallet',     routerLink: '/director/pagos'      },
         { label: 'Cursos',     icon: 'pi-book',       routerLink: '/director/cursos'     },
         { label: 'Profesores', icon: 'pi-users',      routerLink: '/director/profesores' },
+        { label: 'Padres',     icon: 'pi-heart',      routerLink: '/director/padres'     },
         { label: 'Reportes',   icon: 'pi-chart-bar',  routerLink: '/director/reportes'   }
       ];
     }
@@ -201,6 +202,7 @@ export class LayoutComponent {
     if (url.includes('pagos')) return 'Gestión de Pagos';
     if (url.includes('/director/cursos')) return 'Administración de Cursos';
     if (url.includes('profesores')) return 'Gestión de Profesores';
+    if (url.includes('/director/padres')) return 'Gestión de Padres';
     if (url.includes('reportes')) return 'Reportes';
     if (url.includes('/profesor/cursos')) return 'Mis Cursos';
     if (url.includes('/profesor/tareas')) return 'Gestión de Tareas';

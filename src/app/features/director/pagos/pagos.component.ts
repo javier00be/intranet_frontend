@@ -5,8 +5,8 @@ import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
-import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { PagoService, Pago } from '../../../core/services/pago.service';
@@ -22,10 +22,10 @@ import { PagoFormComponent } from '../../../shared/components/pago-form/pago-for
     CardModule,
     ButtonModule,
     TagModule,
-    DialogModule,
     ProgressSpinnerModule,
     ToastModule,
-    PagoFormComponent
+    PagoFormComponent,
+    ModalComponent
   ],
   providers: [MessageService],
   template: `
@@ -89,14 +89,13 @@ import { PagoFormComponent } from '../../../shared/components/pago-form/pago-for
               <td>#{{ pago.id }}</td>
               <td>
                 <div class="student-info">
-                  <span class="name">{{ pago.estudianteNombre || 'N/A' }}</span>
-                  <span class="grade">{{ pago.grado || 'Grado no esp.' }}</span>
+                  <span class="name">Estudiante #{{ pago.estudianteId }}</span>
                 </div>
               </td>
               <td>{{ pago.concepto }}</td>
               <td>{{ pago.monto | currency }}</td>
-              <td>{{ pago.fecha | date:'dd/MM/yyyy' }}</td>
-              <td>{{ pago.metodo }}</td>
+              <td>{{ pago.fechaPago | date:'dd/MM/yyyy' }}</td>
+              <td>{{ pago.metodoPago }}</td>
               <td>
                 <p-tag [value]="pago.estado" [severity]="getSeverity(pago.estado)" />
               </td>
@@ -116,9 +115,11 @@ import { PagoFormComponent } from '../../../shared/components/pago-form/pago-for
         </p-table>
       </p-card>
 
-      <p-dialog header="Registrar Nuevo Pago" [(visible)]="display" [modal]="true" [style]="{ width: '450px' }">
-        <app-pago-form (save)="onSavePago($event)" (cancel)="display = false" />
-      </p-dialog>
+      <app-modal [(visible)]="display" title="Registrar Nuevo Pago" subtitle="Completá los datos del cobro">
+        @if (display) {
+          <app-pago-form (save)="onSavePago($event)" (cancel)="display = false" />
+        }
+      </app-modal>
     </div>
   `,
   styles: [`
@@ -254,10 +255,10 @@ export class PagosComponent implements OnInit {
 
   calculateStats() {
     this.totalRecaudado = this.pagos
-      .filter(p => p.estado === 'Completado' || p.estado === 'PAGADO')
+      .filter(p => p.estado === 'PAGADO')
       .reduce((acc, curr) => acc + curr.monto, 0);
-    
-    const pendientes = this.pagos.filter(p => p.estado === 'Pendiente' || p.estado === 'PENDIENTE');
+
+    const pendientes = this.pagos.filter(p => p.estado === 'PENDIENTE' || p.estado === 'VENCIDO');
     this.totalPendiente = pendientes.reduce((acc, curr) => acc + curr.monto, 0);
     this.pagosPendientesCount = pendientes.length;
   }
@@ -280,10 +281,9 @@ export class PagosComponent implements OnInit {
   }
 
   getSeverity(estado: string): any {
-    const e = estado.toUpperCase();
-    if (e === 'COMPLETADO' || e === 'PAGADO') return 'success';
-    if (e === 'PENDIENTE') return 'warn';
-    if (e === 'FALLIDO' || e === 'VENCIDO') return 'danger';
+    if (estado === 'PAGADO') return 'success';
+    if (estado === 'PENDIENTE') return 'warn';
+    if (estado === 'VENCIDO') return 'danger';
     return 'info';
   }
 }
