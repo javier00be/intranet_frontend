@@ -27,6 +27,7 @@ export interface MatriculaCreateRequest {
   padreEmail: string;
   padrePassword: string;
   padreTelefono: string;
+  diaPago: number;
   alumnos: AlumnoMatriculaRequest[];
 }
 
@@ -51,6 +52,10 @@ export class MatriculaService {
 
   getAll(): Observable<MatriculaDTO[]> {
     return this.http.get<MatriculaDTO[]>(this.apiUrl);
+  }
+
+  getMiMatricula(): Observable<MatriculaDTO> {
+    return this.http.get<MatriculaDTO>(`${this.apiUrl}/mi-matricula`);
   }
 
   crear(request: MatriculaCreateRequest): Observable<MatriculaDTO[]> {

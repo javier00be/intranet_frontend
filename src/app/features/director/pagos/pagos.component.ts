@@ -7,7 +7,7 @@ import { TagModule } from 'primeng/tag';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
-import { SelectModule } from 'primeng/select';
+import { DialogModule } from 'primeng/dialog';
 import { MessageService } from 'primeng/api';
 import { MensualidadService, MensualidadDTO } from '../../../core/services/mensualidad.service';
 import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/confirm-modal.component';
@@ -23,12 +23,25 @@ const MES_ORDEN: Record<string, number> = {
   JULIO: 7, AGOSTO: 8, SEPTIEMBRE: 9, OCTUBRE: 10, NOVIEMBRE: 11, DICIEMBRE: 12
 };
 
+interface EstudiantePagos {
+  estudianteId: number;
+  estudianteNombre: string;
+  grado: number;
+  nivel: string;
+  matriculaId: number;
+  mensualidades: MensualidadDTO[];
+  pagadas: number;
+  pendientes: number;
+  totalPendiente: number;
+  totalCobrado: number;
+}
+
 @Component({
   selector: 'app-pagos',
   standalone: true,
   imports: [
     CommonModule, FormsModule, TableModule, ButtonModule, TagModule,
-    SkeletonModule, ToastModule, TooltipModule, SelectModule,
+    SkeletonModule, ToastModule, TooltipModule, DialogModule,
     ConfirmModalComponent
   ],
   providers: [MessageService],
@@ -39,25 +52,7 @@ const MES_ORDEN: Record<string, number> = {
       <div class="page-header">
         <div>
           <h1 class="page-title">Mensualidades</h1>
-          <p class="page-subtitle">{{ filtradasCount() }} cuota{{ filtradasCount() !== 1 ? 's' : '' }} · {{ pendientesCount() }} pendiente{{ pendientesCount() !== 1 ? 's' : '' }}</p>
-        </div>
-        <div class="header-filters">
-          <p-select
-            [options]="mesesOpciones"
-            [(ngModel)]="mesFiltro"
-            placeholder="Todos los meses"
-            [showClear]="true"
-            optionLabel="label"
-            optionValue="value"
-            styleClass="filter-drop" />
-          <p-select
-            [options]="estadoOpciones"
-            [(ngModel)]="estadoFiltro"
-            placeholder="Todos los estados"
-            [showClear]="true"
-            optionLabel="label"
-            optionValue="value"
-            styleClass="filter-drop" />
+          <p class="page-subtitle">{{ estudiantesPagos().length }} alumno{{ estudiantesPagos().length !== 1 ? 's' : '' }} · {{ totalPendientesGlobal() }} cuota{{ totalPendientesGlobal() !== 1 ? 's' : '' }} pendiente{{ totalPendientesGlobal() !== 1 ? 's' : '' }}</p>
         </div>
       </div>
 
@@ -65,15 +60,15 @@ const MES_ORDEN: Record<string, number> = {
       <div class="stats-row">
         <div class="stat-card">
           <span class="stat-label">Total cobrado</span>
-          <span class="stat-value">S/ {{ totalCobrado() | number:'1.2-2' }}</span>
+          <span class="stat-value">S/ {{ totalCobradoGlobal() | number:'1.2-2' }}</span>
         </div>
         <div class="stat-card warn">
           <span class="stat-label">Total pendiente</span>
-          <span class="stat-value">S/ {{ totalPendiente() | number:'1.2-2' }}</span>
+          <span class="stat-value">S/ {{ totalPendienteMontoGlobal() | number:'1.2-2' }}</span>
         </div>
         <div class="stat-card neutral">
           <span class="stat-label">Cuotas pagadas</span>
-          <span class="stat-value">{{ pagadasCount() }}</span>
+          <span class="stat-value">{{ totalPagadasGlobal() }}</span>
         </div>
       </div>
 
@@ -81,23 +76,23 @@ const MES_ORDEN: Record<string, number> = {
         <div class="skeleton-table">
           @for (i of [1,2,3,4,5]; track i) {
             <div class="skeleton-row">
-              <p-skeleton height="1rem" width="22%" />
+              <p-skeleton height="1rem" width="25%" />
               <p-skeleton height="1rem" width="10%" />
-              <p-skeleton height="1rem" width="10%" />
-              <p-skeleton height="1rem" width="10%" />
-              <p-skeleton height="1rem" width="10%" />
+              <p-skeleton height="1rem" width="12%" />
+              <p-skeleton height="1rem" width="12%" />
+              <p-skeleton height="1rem" width="8%" />
             </div>
           }
         </div>
-      } @else if (mensualidadesFiltradas().length === 0) {
+      } @else if (estudiantesPagos().length === 0) {
         <div class="empty-state">
           <i class="pi pi-wallet"></i>
-          <p>No hay mensualidades{{ mesFiltro || estadoFiltro ? ' con ese filtro' : ' registradas' }}.</p>
+          <p>No hay mensualidades registradas.</p>
         </div>
       } @else {
         <div class="table-card">
           <p-table
-            [value]="mensualidadesFiltradas()"
+            [value]="estudiantesPagos()"
             [paginator]="true"
             [rows]="15"
             styleClass="p-datatable-striped"
@@ -106,66 +101,117 @@ const MES_ORDEN: Record<string, number> = {
               <tr>
                 <th>Alumno</th>
                 <th>Grado / Nivel</th>
-                <th>Mes</th>
-                <th>Monto</th>
-                <th>Vencimiento</th>
-                <th>Estado</th>
+                <th>Pagadas</th>
+                <th>Pendientes</th>
+                <th>Monto pendiente</th>
                 <th></th>
               </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-m>
+            <ng-template pTemplate="body" let-ep>
               <tr>
                 <td>
                   <div class="student-cell">
-                    <div class="student-avatar">{{ initials(m.estudianteNombre) }}</div>
-                    <span>{{ m.estudianteNombre }}</span>
+                    <div class="student-avatar">{{ initials(ep.estudianteNombre) }}</div>
+                    <span>{{ ep.estudianteNombre }}</span>
                   </div>
                 </td>
                 <td>
-                  <span class="grado-badge">{{ m.grado }}° {{ nivelLabel(m.nivel) }}</span>
-                </td>
-                <td class="mes-cell">{{ mesLabel(m.mes) }} {{ m.anio }}</td>
-                <td class="monto-cell">S/ {{ m.monto | number:'1.2-2' }}</td>
-                <td class="fecha-cell">
-                  {{ m.fechaVencimiento | date:'dd/MM/yyyy' }}
+                  <span class="grado-badge">{{ ep.grado }}° {{ nivelLabel(ep.nivel) }}</span>
                 </td>
                 <td>
-                  <p-tag
-                    [value]="m.estadoPago === 'PAGADO' ? 'Pagado' : 'Pendiente'"
-                    [severity]="m.estadoPago === 'PAGADO' ? 'success' : 'warn'" />
+                  <span class="count-badge pagado">{{ ep.pagadas }} / 10</span>
                 </td>
                 <td>
-                  @if (m.estadoPago === 'PENDIENTE') {
-                    <button
-                      class="action-btn pay"
-                      (click)="onPagar(m)"
-                      pTooltip="Registrar pago"
-                      tooltipPosition="left">
-                      <i class="pi pi-check-circle"></i>
-                    </button>
-                  } @else {
-                    <span class="fecha-pago">{{ m.fechaPago | date:'dd/MM/yy' }}</span>
-                  }
+                  <span class="count-badge" [class.pendiente]="ep.pendientes > 0" [class.ok]="ep.pendientes === 0">
+                    {{ ep.pendientes }}
+                  </span>
                 </td>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="emptymessage">
-              <tr>
-                <td colspan="7" class="text-center p-4">No se encontraron mensualidades.</td>
+                <td class="monto-cell">S/ {{ ep.totalPendiente | number:'1.2-2' }}</td>
+                <td>
+                  <p-button
+                    icon="pi pi-eye"
+                    [rounded]="true"
+                    [text]="true"
+                    severity="secondary"
+                    (click)="abrirDetalle(ep)"
+                    pTooltip="Ver mensualidades"
+                    tooltipPosition="left" />
+                </td>
               </tr>
             </ng-template>
           </p-table>
         </div>
       }
-
-      <app-confirm-modal
-        [(visible)]="showConfirm"
-        title="Registrar pago"
-        [message]="confirmMsg"
-        confirmLabel="Confirmar pago"
-        (confirm)="ejecutarPago()"
-        (cancel)="showConfirm = false" />
     </div>
+
+    <!-- Modal detalle de mensualidades por alumno -->
+    <p-dialog
+      [(visible)]="showDetalle"
+      [modal]="true"
+      [closable]="true"
+      [draggable]="false"
+      [resizable]="false"
+      styleClass="detalle-dialog"
+      [style]="{width: '640px'}">
+      <ng-template pTemplate="header">
+        <div class="dialog-header">
+          <div class="student-avatar large">{{ initials(estudianteSeleccionado()?.estudianteNombre ?? '') }}</div>
+          <div>
+            <div class="dialog-title">{{ estudianteSeleccionado()?.estudianteNombre }}</div>
+            <div class="dialog-subtitle">{{ estudianteSeleccionado()?.grado }}° {{ nivelLabel(estudianteSeleccionado()?.nivel ?? '') }}</div>
+          </div>
+        </div>
+      </ng-template>
+
+      <div class="dialog-body">
+        @if (estudianteSeleccionado(); as ep) {
+          <div class="mensualidades-list">
+            @for (m of mensualidadesOrdenadas(ep); track m.id) {
+              <div class="mensualidad-row" [class.pagada]="m.estadoPago === 'PAGADO'">
+                <div class="mes-info">
+                  <span class="mes-nombre">{{ mesLabel(m.mes) }}</span>
+                  <span class="vencimiento">Vence {{ m.fechaVencimiento | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <span class="mes-monto">S/ {{ m.monto | number:'1.2-2' }}</span>
+                <div class="mes-estado">
+                  @if (m.estadoPago === 'PAGADO') {
+                    <div class="estado-pagado">
+                      <p-tag severity="success" icon="pi pi-check" [value]="(m.fechaPago | date:'dd/MM/yy') ?? 'Pagado'" />
+                    </div>
+                  } @else {
+                    <p-button
+                      label="Registrar pago"
+                      icon="pi pi-credit-card"
+                      size="small"
+                      (click)="onPagar(m)" />
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="dialog-resumen">
+            <div class="resumen-item">
+              <span class="resumen-label">Cobrado</span>
+              <span class="resumen-val cobrado">S/ {{ ep.totalCobrado | number:'1.2-2' }}</span>
+            </div>
+            <div class="resumen-divider"></div>
+            <div class="resumen-item">
+              <span class="resumen-label">Pendiente</span>
+              <span class="resumen-val pendiente">S/ {{ ep.totalPendiente | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </p-dialog>
+
+    <app-confirm-modal
+      [(visible)]="showConfirm"
+      title="Registrar pago"
+      [message]="confirmMsg"
+      confirmLabel="Confirmar pago"
+      (confirm)="ejecutarPago()"
+      (cancel)="showConfirm = false" />
   `,
   styles: [`
     .page { padding: 1.75rem 2rem; display: flex; flex-direction: column; gap: 1.5rem; min-height: 100%; }
@@ -173,9 +219,6 @@ const MES_ORDEN: Record<string, number> = {
     .page-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; }
     .page-title { font-size: 1.625rem; font-weight: 700; color: #111827; margin: 0; letter-spacing: -0.02em; }
     .page-subtitle { font-size: 0.875rem; color: #9ca3af; margin: 0.25rem 0 0; }
-
-    .header-filters { display: flex; gap: 0.75rem; align-items: center; }
-    ::ng-deep .filter-drop .p-select { border-radius: 10px; font-size: 0.875rem; }
 
     .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
     .stat-card {
@@ -197,6 +240,7 @@ const MES_ORDEN: Record<string, number> = {
       display: flex; align-items: center; justify-content: center;
       font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
     }
+    .student-avatar.large { width: 42px; height: 42px; font-size: 0.9rem; }
 
     .grado-badge {
       display: inline-flex; align-items: center;
@@ -205,18 +249,16 @@ const MES_ORDEN: Record<string, number> = {
       padding: 0.25rem 0.75rem; border-radius: 20px;
     }
 
-    .mes-cell { font-size: 0.875rem; font-weight: 600; color: #374151; }
-    .monto-cell { font-size: 0.875rem; font-weight: 700; color: #111827; }
-    .fecha-cell { font-size: 0.8125rem; color: #6b7280; }
-    .fecha-pago { font-size: 0.8125rem; color: #10b981; font-weight: 500; }
-
-    .action-btn {
-      width: 32px; height: 32px; border-radius: 8px; border: none;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 0.875rem; transition: all 0.15s;
+    .count-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.8125rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 20px;
+      background: #f3f4f6; color: #6b7280;
     }
-    .action-btn.pay { background: #d1fae5; color: #059669; }
-    .action-btn.pay:hover { background: #059669; color: white; }
+    .count-badge.pagado { background: #d1fae5; color: #059669; }
+    .count-badge.pendiente { background: #fef3c7; color: #d97706; }
+    .count-badge.ok { background: #d1fae5; color: #059669; }
+
+    .monto-cell { font-size: 0.875rem; font-weight: 700; color: #111827; }
 
     .skeleton-table { background: white; border: 1px solid #f3f4f6; border-radius: 14px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.875rem; }
     .skeleton-row { display: flex; align-items: center; gap: 1.5rem; padding: 0.5rem 0; }
@@ -225,15 +267,52 @@ const MES_ORDEN: Record<string, number> = {
     .empty-state i { font-size: 2.5rem; color: #e5e7eb; }
     .empty-state p { font-size: 0.9375rem; color: #9ca3af; margin: 0; }
 
-    .text-center { text-align: center; }
-    .p-4 { padding: 1rem; }
+    /* Dialog */
+    .dialog-header { display: flex; align-items: center; gap: 0.875rem; }
+    .dialog-title { font-size: 1.0625rem; font-weight: 700; color: #111827; }
+    .dialog-subtitle { font-size: 0.8125rem; color: #9ca3af; margin-top: 0.1rem; }
+
+    .dialog-body { display: flex; flex-direction: column; gap: 1.25rem; padding: 0.25rem 0; }
+
+    .mensualidades-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .mensualidad-row {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.75rem 1rem; border-radius: 10px;
+      background: #f9fafb; border: 1px solid #f3f4f6;
+      transition: background 0.15s;
+    }
+    .mensualidad-row.pagada { background: #f0fdf4; border-color: #bbf7d0; }
+
+    .mes-info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+    .mes-nombre { font-size: 0.9375rem; font-weight: 600; color: #111827; }
+    .vencimiento { font-size: 0.75rem; color: #9ca3af; margin-top: 0.1rem; }
+
+    .mes-monto { font-size: 0.9375rem; font-weight: 700; color: #374151; white-space: nowrap; }
+
+    .mes-estado { display: flex; align-items: center; justify-content: flex-end; min-width: 140px; }
+
+    .estado-pagado { display: flex; align-items: center; }
+
+    .dialog-resumen {
+      display: flex; align-items: center; gap: 1.5rem;
+      padding: 0.875rem 1rem; border-radius: 10px;
+      background: white; border: 1px solid #e5e7eb;
+    }
+    .resumen-item { display: flex; flex-direction: column; gap: 0.2rem; }
+    .resumen-label { font-size: 0.75rem; color: #9ca3af; }
+    .resumen-val { font-size: 1.0625rem; font-weight: 700; }
+    .resumen-val.cobrado { color: #059669; }
+    .resumen-val.pendiente { color: #d97706; }
+    .resumen-divider { width: 1px; height: 36px; background: #e5e7eb; }
 
     :host-context(.dark-mode) .page-title { color: #f9fafb; }
     :host-context(.dark-mode) .stat-card { background: #1e293b; border-color: #334155; }
     :host-context(.dark-mode) .stat-value { color: #f1f5f9; }
     :host-context(.dark-mode) .table-card { background: #1e293b; border-color: #334155; }
     :host-context(.dark-mode) .monto-cell { color: #f1f5f9; }
-    :host-context(.dark-mode) .mes-cell { color: #e2e8f0; }
+    :host-context(.dark-mode) .mensualidad-row { background: #1e293b; border-color: #334155; }
+    :host-context(.dark-mode) .mes-nombre { color: #f1f5f9; }
   `]
 })
 export class PagosComponent implements OnInit {
@@ -242,35 +321,48 @@ export class PagosComponent implements OnInit {
 
   loading = signal(true);
   mensualidades = signal<MensualidadDTO[]>([]);
-  mesFiltro: string | null = null;
-  estadoFiltro: string | null = null;
+  showDetalle = false;
   showConfirm = false;
   confirmMsg = '';
   private pendingId: number | null = null;
+  private _estudianteSeleccionado = signal<EstudiantePagos | null>(null);
 
-  mesesOpciones = Object.entries(MES_LABEL).map(([value, label]) => ({ value, label }));
-  estadoOpciones = [
-    { value: 'PENDIENTE', label: 'Pendiente' },
-    { value: 'PAGADO',    label: 'Pagado'    }
-  ];
+  estudianteSeleccionado = computed(() => this._estudianteSeleccionado());
 
-  mensualidadesFiltradas = computed(() => {
-    let lista = this.mensualidades();
-    if (this.mesFiltro)    lista = lista.filter(m => m.mes === this.mesFiltro);
-    if (this.estadoFiltro) lista = lista.filter(m => m.estadoPago === this.estadoFiltro);
-    return lista.sort((a, b) => {
-      const mesA = MES_ORDEN[a.mes] ?? 0;
-      const mesB = MES_ORDEN[b.mes] ?? 0;
-      return a.estudianteNombre.localeCompare(b.estudianteNombre) || mesA - mesB;
-    });
+  estudiantesPagos = computed<EstudiantePagos[]>(() => {
+    const map = new Map<number, EstudiantePagos>();
+    for (const m of this.mensualidades()) {
+      if (!map.has(m.estudianteId)) {
+        map.set(m.estudianteId, {
+          estudianteId: m.estudianteId,
+          estudianteNombre: m.estudianteNombre,
+          grado: m.grado,
+          nivel: m.nivel,
+          matriculaId: m.matriculaId,
+          mensualidades: [],
+          pagadas: 0,
+          pendientes: 0,
+          totalPendiente: 0,
+          totalCobrado: 0
+        });
+      }
+      const ep = map.get(m.estudianteId)!;
+      ep.mensualidades.push(m);
+      if (m.estadoPago === 'PAGADO') {
+        ep.pagadas++;
+        ep.totalCobrado += m.monto;
+      } else {
+        ep.pendientes++;
+        ep.totalPendiente += m.monto;
+      }
+    }
+    return [...map.values()].sort((a, b) => a.estudianteNombre.localeCompare(b.estudianteNombre));
   });
 
-  filtradasCount = computed(() => this.mensualidadesFiltradas().length);
-  pendientesCount = computed(() => this.mensualidades().filter(m => m.estadoPago === 'PENDIENTE').length);
-  pagadasCount    = computed(() => this.mensualidades().filter(m => m.estadoPago === 'PAGADO').length);
-
-  totalCobrado   = computed(() => this.mensualidades().filter(m => m.estadoPago === 'PAGADO').reduce((acc, m) => acc + m.monto, 0));
-  totalPendiente = computed(() => this.mensualidades().filter(m => m.estadoPago === 'PENDIENTE').reduce((acc, m) => acc + m.monto, 0));
+  totalPendientesGlobal = computed(() => this.mensualidades().filter(m => m.estadoPago === 'PENDIENTE').length);
+  totalPagadasGlobal    = computed(() => this.mensualidades().filter(m => m.estadoPago === 'PAGADO').length);
+  totalCobradoGlobal    = computed(() => this.mensualidades().filter(m => m.estadoPago === 'PAGADO').reduce((acc, m) => acc + m.monto, 0));
+  totalPendienteMontoGlobal = computed(() => this.mensualidades().filter(m => m.estadoPago === 'PENDIENTE').reduce((acc, m) => acc + m.monto, 0));
 
   ngOnInit() { this.load(); }
 
@@ -285,6 +377,15 @@ export class PagosComponent implements OnInit {
     });
   }
 
+  abrirDetalle(ep: EstudiantePagos) {
+    this._estudianteSeleccionado.set(ep);
+    this.showDetalle = true;
+  }
+
+  mensualidadesOrdenadas(ep: EstudiantePagos): MensualidadDTO[] {
+    return [...ep.mensualidades].sort((a, b) => (MES_ORDEN[a.mes] ?? 0) - (MES_ORDEN[b.mes] ?? 0));
+  }
+
   onPagar(m: MensualidadDTO) {
     this.pendingId = m.id;
     this.confirmMsg = `¿Registrar el pago de ${this.mesLabel(m.mes)} ${m.anio} de ${m.estudianteNombre}? Monto: S/ ${m.monto.toFixed(2)}`;
@@ -297,7 +398,9 @@ export class PagosComponent implements OnInit {
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Pagado', detail: 'Mensualidad registrada como pagada' });
         this.pendingId = null;
+        this.showConfirm = false;
         this.load();
+        this.showDetalle = false;
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo registrar el pago' });

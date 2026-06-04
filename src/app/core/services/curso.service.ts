@@ -27,6 +27,14 @@ export class CursoService {
     return this.http.get<Curso[]>(this.apiUrl);
   }
 
+  getByNivelAndGrado(nivel: string, grado: number): Observable<Curso[]> {
+    return this.http.get<Curso[]>(`${this.apiUrl}?nivel=${nivel}&grado=${grado}`);
+  }
+
+  getMisCursos(): Observable<Curso[]> {
+    return this.http.get<Curso[]>(`${this.apiUrl}/mis-cursos`);
+  }
+
   getById(id: number): Observable<Curso> {
     return this.http.get<Curso>(`${this.apiUrl}/${id}`);
   }

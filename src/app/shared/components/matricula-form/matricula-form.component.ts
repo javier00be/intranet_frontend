@@ -119,7 +119,21 @@ import { DniService } from '../../../core/services/dni.service';
 
         <!-- PASO 2: Alumnos -->
         @if (step() === 2) {
-          <div class="form-section" formArrayName="alumnos">
+          <div class="form-section">
+            <span class="section-label">Configuración de pagos</span>
+            <div class="field-row-half">
+              <div class="field">
+                <label>Día de cobro mensual <span class="req">*</span></label>
+                <input pInputText type="number" formControlName="diaPago"
+                  placeholder="15" min="1" max="31" />
+                <small class="field-hint">Día del mes en que vence cada mensualidad (1-31). Si el mes tiene menos días se usa el último.</small>
+                @if (form.get('diaPago')?.invalid && form.get('diaPago')?.touched) {
+                  <small class="field-error">Ingresá un día entre 1 y 31</small>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="form-section alumno-section" formArrayName="alumnos">
             @for (alumno of alumnoGroups; track $index; let i = $index) {
               <div class="alumno-card" [formGroupName]="i">
                 <div class="alumno-header">
@@ -255,7 +269,7 @@ import { DniService } from '../../../core/services/dni.service';
             </div>
 
             <div class="summary-divider">
-              {{ alumnoGroups.length }} alumno{{ alumnoGroups.length !== 1 ? 's' : '' }} a matricular
+              {{ alumnoGroups.length }} alumno{{ alumnoGroups.length !== 1 ? 's' : '' }} a matricular · Día de cobro: <strong>{{ form.get('diaPago')?.value }}</strong> de cada mes
             </div>
 
             @for (alumno of alumnoGroups; track $index; let i = $index) {
@@ -379,6 +393,8 @@ import { DniService } from '../../../core/services/dni.service';
 
     .dni-spin { color: #6366f1; margin-left: 0.375rem; font-size: 0.75rem; }
     .dni-hint { color: #9ca3af; margin-left: 0.375rem; font-size: 0.75rem; cursor: default; }
+    .field-hint { font-size: 0.75rem; color: #9ca3af; }
+    .alumno-section { border-top: 1px solid #f3f4f6; }
 
     /* PrimeNG overrides */
     :host ::ng-deep input.p-inputtext,
@@ -437,6 +453,7 @@ export class MatriculaFormComponent implements OnInit {
         password:         ['', [Validators.required, Validators.minLength(6)]],
         telefono:         ['']
       }),
+      diaPago: [15, [Validators.required, Validators.min(1), Validators.max(31)]],
       alumnos: this.fb.array([this.createAlumnoGroup()])
     });
   }
@@ -523,8 +540,9 @@ export class MatriculaFormComponent implements OnInit {
   }
 
   nextStep2(): void {
+    this.form.get('diaPago')?.markAsTouched();
     this.alumnosArray.markAllAsTouched();
-    if (this.alumnosArray.invalid) return;
+    if (this.form.get('diaPago')?.invalid || this.alumnosArray.invalid) return;
     this.step.set(3);
   }
 
@@ -541,6 +559,7 @@ export class MatriculaFormComponent implements OnInit {
       padreEmail:           v.padre.email,
       padrePassword:        v.padre.password,
       padreTelefono:        v.padre.telefono,
+      diaPago:              v.diaPago,
       alumnos: v.alumnos.map((a: any) => ({
         nombre:           a.nombre,
         apellidoPaterno:  a.apellidoPaterno,
