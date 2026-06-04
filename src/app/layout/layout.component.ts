@@ -141,12 +141,13 @@ export class LayoutComponent {
     
     if (rol === 'director') {
       return [
-        { label: 'Dashboard',  icon: 'pi-home',      routerLink: '/director/dashboard'  },
-        { label: 'Pagos',      icon: 'pi-wallet',     routerLink: '/director/pagos'      },
-        { label: 'Cursos',     icon: 'pi-book',       routerLink: '/director/cursos'     },
-        { label: 'Profesores', icon: 'pi-users',      routerLink: '/director/profesores' },
-        { label: 'Padres',     icon: 'pi-heart',      routerLink: '/director/padres'     },
-        { label: 'Reportes',   icon: 'pi-chart-bar',  routerLink: '/director/reportes'   }
+        { label: 'Dashboard',   icon: 'pi-home',           routerLink: '/director/dashboard'   },
+        { label: 'Matrículas', icon: 'pi-graduation-cap', routerLink: '/director/matriculas'  },
+        { label: 'Pagos',      icon: 'pi-wallet',         routerLink: '/director/pagos'       },
+        { label: 'Cursos',     icon: 'pi-book',           routerLink: '/director/cursos'      },
+        { label: 'Profesores', icon: 'pi-users',          routerLink: '/director/profesores'  },
+        { label: 'Padres',     icon: 'pi-heart',          routerLink: '/director/padres'      },
+        { label: 'Reportes',   icon: 'pi-chart-bar',      routerLink: '/director/reportes'    }
       ];
     }
     
@@ -199,6 +200,7 @@ export class LayoutComponent {
       };
       return labels[rol] ?? 'Dashboard';
     }
+    if (url.includes('matriculas')) return 'Matrículas';
     if (url.includes('pagos')) return 'Gestión de Pagos';
     if (url.includes('/director/cursos')) return 'Administración de Cursos';
     if (url.includes('profesores')) return 'Gestión de Profesores';

@@ -136,7 +136,7 @@ import { forkJoin } from 'rxjs';
                     <span class="curso-row-nombre">{{ curso.nombre }}</span>
                     <span class="curso-row-meta">
                       <span class="nivel-dot" [style.background]="nivelColor(curso.nivel)"></span>
-                      {{ nivelLabel(curso.nivel) }} · {{ curso.grados?.join('°, ') }}° {{ curso.seccion ?? '' }}
+                      {{ nivelLabel(curso.nivel) }} · {{ curso.grados.join('°, ') }}° {{ curso.seccion ?? '' }}
                       @if (curso.profesorId && curso.profesorId !== selectedProfe?.id) {
                         <span class="otro-prof"> · asignado a otro docente</span>
                       }
