@@ -6,17 +6,17 @@
 
 /* ===== Intranet Albert Einstein — Design Tokens ===== */
 :root {
-  /* Greens — emerald default */
-  --g-50:  #ecfdf5;
-  --g-100: #d1fae5;
-  --g-200: #a7f3d0;
-  --g-300: #6ee7b7;
-  --g-400: #34d399;
-  --g-500: #10b981;
-  --g-600: #059669;
-  --g-700: #047857;
-  --g-800: #065f46;
-  --g-900: #064e3b;
+  /* Teal — brand palette */
+  --g-50:  #EDF6F5;
+  --g-100: #D9EDEB;
+  --g-200: #C8DAD8;
+  --g-300: #ABBFBD;
+  --g-400: #8CA5A3;
+  --g-500: #6D8B89;
+  --g-600: #4E716F;
+  --g-700: #2F5755;
+  --g-800: #1E4543;
+  --g-900: #103534;
 
   --accent:      var(--g-700);
   --accent-soft: var(--g-50);
@@ -45,7 +45,7 @@
   /* Surfaces */
   --card-bg:     #ffffff;
   --card-border: rgba(0,0,0,.06);
-  --card-shadow: 0 1px 2px rgba(15,30,20,.04), 0 1px 0 rgba(15,30,20,.02);
+  --card-shadow: 0 1px 2px rgba(15,30,30,.04), 0 1px 0 rgba(15,30,30,.02);
   --card-radius: 14px;
 
   /* Type */
@@ -64,6 +64,7 @@
 }
 
 /* Tone presets */
+[data-tone="teal"]    { --g-50:#EDF6F5;--g-100:#D9EDEB;--g-200:#C8DAD8;--g-300:#ABBFBD;--g-400:#8CA5A3;--g-500:#6D8B89;--g-600:#4E716F;--g-700:#2F5755;--g-800:#1E4543;--g-900:#103534; }
 [data-tone="emerald"] { --g-50:#ecfdf5;--g-100:#d1fae5;--g-200:#a7f3d0;--g-300:#6ee7b7;--g-400:#34d399;--g-500:#10b981;--g-600:#059669;--g-700:#047857;--g-800:#065f46;--g-900:#064e3b; }
 [data-tone="sage"]    { --g-50:#f3f7f2;--g-100:#e3eedf;--g-200:#c8dcc1;--g-300:#a4c598;--g-400:#80a973;--g-500:#658c58;--g-600:#4f7244;--g-700:#3f5a37;--g-800:#33482d;--g-900:#283a23; }
 [data-tone="forest"]  { --g-50:#eef5ee;--g-100:#d6e8d6;--g-200:#abcdac;--g-300:#7eaf83;--g-400:#588f5e;--g-500:#3a7142;--g-600:#2d5934;--g-700:#244829;--g-800:#1c3920;--g-900:#142b18; }

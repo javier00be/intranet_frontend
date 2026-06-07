@@ -1,0 +1,128 @@
+<div class="page-container">
+  <p-toast />
+
+  <div class="header">
+    <div class="title-section">
+      <h1>Gestión de Profesores</h1>
+      <p class="subtitle">Administrá el personal docente y asigná sus cursos</p>
+    </div>
+    <p-button label="Nuevo Profesor" icon="pi pi-user-plus" (click)="showCreateDialog()" />
+  </div>
+
+  <p-card>
+    <div *ngIf="isLoading()" class="flex justify-center p-8">
+      <p-progressspinner styleClass="w-16 h-16" />
+    </div>
+
+    <p-table *ngIf="!isLoading()" [value]="profesores" [paginator]="true" [rows]="10" styleClass="p-datatable-striped">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Profesor</th>
+          <th>Especialidad</th>
+          <th>Contacto</th>
+          <th>Cursos asignados</th>
+          <th>Acciones</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-profe>
+        <tr>
+          <td>
+            <div class="profe-cell">
+              <p-avatar [label]="getIniciales(profe)" shape="circle" size="large"
+                [style]="{'background-color': '#6366f1', 'color': '#ffffff'}" />
+              <div class="profe-info">
+                <span class="profe-name">{{ profe.usuario?.nombre }} {{ profe.usuario?.apellido }}</span>
+                <span class="profe-email">{{ profe.usuario?.email }}</span>
+              </div>
+            </div>
+          </td>
+          <td><p-tag [value]="profe.especialidad" severity="secondary" /></td>
+          <td><span class="contact"><i class="pi pi-phone"></i> {{ profe.telefono }}</span></td>
+          <td>
+            <span class="cursos-count" [class.none]="cursosDeProfesor(profe.id!).length === 0">
+              {{ cursosDeProfesor(profe.id!).length }} curso{{ cursosDeProfesor(profe.id!).length !== 1 ? 's' : '' }}
+            </span>
+          </td>
+          <td>
+            <div class="table-actions">
+              <p-button icon="pi pi-book" severity="info" rounded text (click)="showCursosDialog(profe)" pTooltip="Asignar cursos" tooltipPosition="top" />
+              <p-button icon="pi pi-pencil" severity="secondary" rounded text (click)="showEditDialog(profe)" pTooltip="Editar" tooltipPosition="top" />
+              <p-button icon="pi pi-ban" severity="danger" rounded text (click)="onDeleteProfe(profe.id!)" pTooltip="Desactivar" tooltipPosition="top" />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="5" class="text-center p-8">No hay profesores registrados.</td></tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <!-- Modal crear -->
+  <app-modal [(visible)]="displayCreate" title="Registrar Profesor" subtitle="Creá la cuenta y el perfil del docente">
+    @if (displayCreate) {
+      <app-profesor-form [profesor]="null" (save)="onCreateProfe($event)" (cancel)="displayCreate = false" />
+    }
+  </app-modal>
+
+  <!-- Modal editar -->
+  <app-modal
+    [(visible)]="displayEdit"
+    title="Editar Profesor"
+    [subtitle]="(selectedProfe?.usuario?.nombre ?? '') + ' ' + (selectedProfe?.usuario?.apellido ?? '')">
+    @if (displayEdit) {
+      <app-profesor-form [profesor]="selectedProfe" (save)="onUpdateProfe($event)" (cancel)="displayEdit = false" />
+    }
+  </app-modal>
+
+  <!-- Modal confirmar desactivación -->
+  <app-confirm-modal
+    [(visible)]="displayConfirm"
+    title="Desactivar profesor"
+    [message]="'¿Desactivar a ' + (pendingProfe?.usuario?.nombre ?? '') + ' ' + (pendingProfe?.usuario?.apellido ?? '') + '? Ya no aparecerá en el sistema.'"
+    confirmLabel="Desactivar"
+    (confirm)="executeDelete()"
+    (cancel)="displayConfirm = false" />
+
+  <!-- Modal asignar cursos -->
+  <app-modal
+    [(visible)]="displayCursos"
+    title="Cursos asignados"
+    [subtitle]="(selectedProfe?.usuario?.nombre ?? '') + ' · ' + (selectedProfe?.especialidad ?? '')"
+    width="540px">
+    @if (displayCursos) {
+      @if (loadingCursos()) {
+        <div class="flex justify-center p-8"><p-progressspinner styleClass="w-10 h-10" /></div>
+      } @else {
+        <div class="cursos-list">
+          @if (todosLosCursos.length === 0) {
+            <p class="empty-msg">No hay cursos creados todavía.</p>
+          }
+          @for (curso of todosLosCursos; track curso.id) {
+            <label class="curso-row" [class.selected]="isCursoSelected(curso.id!)">
+              <p-checkbox [binary]="true" [ngModel]="isCursoSelected(curso.id!)" (ngModelChange)="toggleCurso(curso, $event)" />
+              <div class="curso-row-info">
+                <span class="curso-row-nombre">{{ curso.nombre }}</span>
+                <span class="curso-row-meta">
+                  <span class="nivel-dot" [style.background]="nivelColor(curso.nivel)"></span>
+                  {{ nivelLabel(curso.nivel) }} · {{ curso.grados.join('°, ') }}° {{ curso.seccion ?? '' }}
+                  @if (curso.profesorId && curso.profesorId !== selectedProfe?.id) {
+                    <span class="otro-prof"> · asignado a otro docente</span>
+                  }
+                </span>
+              </div>
+            </label>
+          }
+        </div>
+
+        <div class="asignar-footer">
+          <span class="selected-count">{{ cursosSeleccionados.size }} seleccionado{{ cursosSeleccionados.size !== 1 ? 's' : '' }}</span>
+          <div class="footer-btns">
+            <p-button label="Cancelar" severity="secondary" [text]="true" (click)="displayCursos = false" />
+            <p-button label="Guardar asignación" icon="pi pi-check" [loading]="guardandoCursos()" (click)="guardarAsignacion()" />
+          </div>
+        </div>
+      }
+    }
+  </app-modal>
+</div>

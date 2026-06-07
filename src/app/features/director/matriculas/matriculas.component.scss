@@ -1,0 +1,172 @@
+.page {
+  padding: 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-height: 100%;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.page-title {
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle { font-size: 0.875rem; color: #9ca3af; margin: 0.25rem 0 0; }
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.625rem 1.125rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+
+  &:hover { background: #4f46e5; transform: translateY(-1px); }
+}
+
+.table-card {
+  background: white;
+  border: 1px solid #f3f4f6;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.student-cell { display: flex; align-items: center; gap: 0.75rem; }
+
+.student-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #e0e7ff;
+  color: #6366f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.grado-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #e0e7ff;
+  color: #4338ca;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+}
+
+.monto-cell { font-size: 0.875rem; font-weight: 600; color: #111827; }
+.fecha-cell { font-size: 0.8125rem; color: #6b7280; }
+
+.row-actions { display: flex; gap: 0.25rem; }
+
+.action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid #f3f4f6;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  transition: all 0.15s;
+
+  &:hover      { background: #f5f3ff; color: #6366f1; border-color: #e0e7ff; }
+  &.danger:hover { background: #fff1f2; color: #f43f5e; border-color: #fecdd3; }
+  &.pay        { color: #059669; &:hover { background: #d1fae5; color: #059669; border-color: #a7f3d0; } }
+}
+
+.detalle-body {
+  padding: 1.25rem 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.detalle-row { display: flex; justify-content: space-between; align-items: center; }
+.detalle-lbl { font-size: 0.875rem; color: #6b7280; }
+.detalle-monto { font-size: 1rem; font-weight: 700; color: #111827; }
+.detalle-val { font-size: 0.875rem; color: #374151; }
+.detalle-divider { height: 1px; background: #f3f4f6; }
+
+.detalle-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 0.625rem 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.skeleton-table {
+  background: white;
+  border: 1px solid #f3f4f6;
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.skeleton-row { display: flex; align-items: center; gap: 1.5rem; padding: 0.5rem 0; }
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem;
+  gap: 0.75rem;
+
+  i { font-size: 2.5rem; color: #e5e7eb; }
+  p { font-size: 0.9375rem; color: #9ca3af; margin: 0; }
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+
+  &:hover { border-color: #6366f1; color: #6366f1; }
+}
+
+.text-center { text-align: center; }
+.p-8 { padding: 2rem; }
+
+:host-context(.dark-mode) {
+  .page-title    { color: #f9fafb; }
+  .table-card    { background: #1e293b; border-color: #334155; }
+  .monto-cell    { color: #f1f5f9; }
+  .grado-badge   { background: #312e81; color: #a5b4fc; }
+  .detalle-monto { color: #f1f5f9; }
+  .detalle-divider { background: #334155; }
+  .detalle-hint  { background: #1e293b; }
+}

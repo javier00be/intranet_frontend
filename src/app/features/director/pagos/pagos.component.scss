@@ -1,0 +1,232 @@
+.page {
+  padding: 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-height: 100%;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.page-title {
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin: 0.25rem 0 0;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid #e0e7ff;
+  border-radius: 14px;
+  padding: 1.125rem 1.375rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-left: 4px solid #6366f1;
+
+  &.warn    { border-left-color: #f59e0b; }
+  &.neutral { border-left-color: #10b981; }
+}
+
+.stat-label { font-size: 0.8125rem; color: #6b7280; }
+.stat-value { font-size: 1.375rem; font-weight: 700; color: #111827; }
+
+.table-card {
+  background: white;
+  border: 1px solid #f3f4f6;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.student-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.student-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #e0e7ff;
+  color: #6366f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+
+  &.large { width: 42px; height: 42px; font-size: 0.9rem; }
+}
+
+.grado-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #e0e7ff;
+  color: #4338ca;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+}
+
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  background: #f3f4f6;
+  color: #6b7280;
+
+  &.pagado   { background: #d1fae5; color: #059669; }
+  &.pendiente { background: #fef3c7; color: #d97706; }
+  &.ok       { background: #d1fae5; color: #059669; }
+}
+
+.monto-cell { font-size: 0.875rem; font-weight: 700; color: #111827; }
+
+.skeleton-table {
+  background: white;
+  border: 1px solid #f3f4f6;
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.5rem 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem;
+  gap: 0.75rem;
+
+  i { font-size: 2.5rem; color: #e5e7eb; }
+  p { font-size: 0.9375rem; color: #9ca3af; margin: 0; }
+}
+
+// Dialog
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.dialog-title { font-size: 1.0625rem; font-weight: 700; color: #111827; }
+.dialog-subtitle { font-size: 0.8125rem; color: #9ca3af; margin-top: 0.1rem; }
+
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0.25rem 0;
+}
+
+.mensualidades-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mensualidad-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: #f9fafb;
+  border: 1px solid #f3f4f6;
+  transition: background 0.15s;
+
+  &.pagada { background: #f0fdf4; border-color: #bbf7d0; }
+}
+
+.mes-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.mes-nombre { font-size: 0.9375rem; font-weight: 600; color: #111827; }
+.vencimiento { font-size: 0.75rem; color: #9ca3af; margin-top: 0.1rem; }
+.mes-monto { font-size: 0.9375rem; font-weight: 700; color: #374151; white-space: nowrap; }
+
+.mes-estado {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 140px;
+}
+
+.estado-pagado { display: flex; align-items: center; }
+
+.dialog-resumen {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  background: white;
+  border: 1px solid #e5e7eb;
+}
+
+.resumen-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.resumen-label { font-size: 0.75rem; color: #9ca3af; }
+
+.resumen-val {
+  font-size: 1.0625rem;
+  font-weight: 700;
+
+  &.cobrado  { color: #059669; }
+  &.pendiente { color: #d97706; }
+}
+
+.resumen-divider { width: 1px; height: 36px; background: #e5e7eb; }
+
+:host-context(.dark-mode) {
+  .page-title { color: #f9fafb; }
+  .stat-card  { background: #1e293b; border-color: #334155; }
+  .stat-value { color: #f1f5f9; }
+  .table-card { background: #1e293b; border-color: #334155; }
+  .monto-cell { color: #f1f5f9; }
+  .mensualidad-row { background: #1e293b; border-color: #334155; }
+  .mes-nombre { color: #f1f5f9; }
+}

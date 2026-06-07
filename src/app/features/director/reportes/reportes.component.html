@@ -1,0 +1,49 @@
+<div class="page-container">
+  <div class="header">
+    <div class="title-section">
+      <h1>Centro de Reportes</h1>
+      <p class="subtitle">Análisis detallado de rendimiento y finanzas</p>
+    </div>
+    <div class="actions">
+      <p-button label="Generar PDF" icon="pi pi-file-pdf" severity="danger" />
+      <p-button label="Descargar Excel" icon="pi pi-file-excel" severity="success" />
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <p-card header="Rendimiento Académico por Grado">
+      <p-chart type="bar" [data]="performanceData" [options]="chartOptions" />
+    </p-card>
+
+    <p-card header="Distribución de Pagos">
+      <p-chart type="doughnut" [data]="paymentDistData" [options]="chartOptions" />
+    </p-card>
+  </div>
+
+  <div class="secondary-grid">
+    <p-card header="Asistencia Mensual" styleClass="flex-1">
+      <p-chart type="line" [data]="attendanceData" [options]="chartOptions" />
+    </p-card>
+
+    <p-card header="Alertas de Rendimiento Bajo" styleClass="flex-1">
+      <p-table [value]="alertas" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Estudiante</th>
+            <th>Grado</th>
+            <th>Promedio</th>
+            <th>Estado</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-alerta>
+          <tr>
+            <td>{{ alerta.nombre }}</td>
+            <td>{{ alerta.grado }}</td>
+            <td><span class="font-bold text-red-500">{{ alerta.promedio }}</span></td>
+            <td><p-tag value="Riesgo" severity="danger" /></td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+</div>

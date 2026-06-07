@@ -1,0 +1,185 @@
+.page {
+  padding: 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 100%;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.page-title {
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle { font-size: 0.875rem; color: #9ca3af; margin: 0.2rem 0 0; }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.search-input { width: 200px; border-radius: 8px; font-size: 0.875rem; }
+
+.nivel-block {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
+  background: white;
+}
+
+.nivel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--nc) 8%, white), white);
+  border-bottom: 1px solid #f3f4f6;
+  border-left: 4px solid var(--nc, #6366f1);
+}
+
+.nivel-left { display: flex; align-items: center; gap: 0.75rem; }
+
+.nivel-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--nc, #6366f1);
+  background: color-mix(in srgb, var(--nc) 12%, white);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+}
+
+.nivel-count { font-size: 0.8125rem; color: #9ca3af; }
+
+.grado-row {
+  display: flex;
+  align-items: flex-start;
+  border-bottom: 1px solid #f9fafb;
+  min-height: 56px;
+
+  &:last-child { border-bottom: none; }
+}
+
+.grado-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  padding: 0.875rem 0.75rem;
+  background: #fafafa;
+  border-right: 1px solid #f3f4f6;
+  gap: 0.25rem;
+  align-self: stretch;
+}
+
+.grado-num { font-size: 0.875rem; font-weight: 700; color: #374151; }
+
+.grado-count {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: #e5e7eb;
+  color: #6b7280;
+  padding: 0.1rem 0.4rem;
+  border-radius: 8px;
+}
+
+.cursos-lista {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  align-content: flex-start;
+}
+
+.curso-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.5rem 0.375rem 0.5rem 0.75rem;
+  transition: box-shadow 0.15s, border-color 0.15s;
+
+  &:hover {
+    border-color: #c7d2fe;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
+
+    .chip-actions { opacity: 1; }
+  }
+
+  &.inactivo { opacity: 0.5; }
+}
+
+.chip-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.chip-nombre { font-size: 0.875rem; font-weight: 600; color: #111827; white-space: nowrap; }
+
+.chip-prof {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  color: #9ca3af;
+
+  i { font-size: 0.65rem; }
+  &.sin { color: #d1d5db; font-style: italic; }
+}
+
+.chip-actions {
+  display: flex;
+  gap: 0;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.skeleton-wrap { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5rem;
+  gap: 0.75rem;
+
+  i { font-size: 2.5rem; color: #e5e7eb; }
+  p { font-size: 0.9375rem; color: #9ca3af; margin: 0; }
+}
+
+:host-context(.dark-mode) {
+  .page-title { color: #f1f5f9; }
+  .nivel-block { background: #1e293b; border-color: #334155; }
+
+  .nivel-header {
+    background: linear-gradient(90deg, color-mix(in srgb, var(--nc) 15%, #1e293b), #1e293b);
+    border-color: #334155;
+  }
+
+  .nivel-pill { background: color-mix(in srgb, var(--nc) 20%, #1e293b); }
+  .grado-row { border-color: #334155; }
+  .grado-label { background: #162032; border-color: #334155; }
+  .grado-num { color: #e2e8f0; }
+  .grado-count { background: #334155; color: #94a3b8; }
+  .curso-chip { background: #162032; border-color: #334155; &:hover { border-color: #4f46e5; } }
+  .chip-nombre { color: #f1f5f9; }
+}

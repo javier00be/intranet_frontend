@@ -1,0 +1,106 @@
+<div class="page">
+  <p-toast />
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Cursos</h1>
+      <p class="page-subtitle">{{ cursos().length }} curso{{ cursos().length !== 1 ? 's' : '' }} · {{ anioActual }}</p>
+    </div>
+    <div class="header-actions">
+      <p-iconfield>
+        <p-inputicon styleClass="pi pi-search" />
+        <input pInputText [(ngModel)]="searchTerm" placeholder="Buscar…" class="search-input" />
+      </p-iconfield>
+      <p-button label="Nuevo curso" icon="pi pi-plus" (click)="openCreate()" />
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton-wrap">
+      @for (i of [1,2,3]; track i) {
+        <p-skeleton height="140px" borderRadius="14px" />
+      }
+    </div>
+  } @else {
+
+    @for (nivel of NIVELES; track nivel) {
+      @if (hayEnNivel(nivel)) {
+        <div class="nivel-block">
+
+          <!-- Cabecera del nivel -->
+          <div class="nivel-header" [style.--nc]="nivelColor(nivel)">
+            <div class="nivel-left">
+              <div class="nivel-pill">{{ nivelLabel(nivel) }}</div>
+              <span class="nivel-count">{{ cursosPorNivel(nivel).length }} curso{{ cursosPorNivel(nivel).length !== 1 ? 's' : '' }}</span>
+            </div>
+          </div>
+
+          <!-- Filas de grado -->
+          @for (grado of GRADOS_POR_NIVEL[nivel]; track grado.value) {
+            @if (cursosPorGrado(nivel, grado.value).length > 0) {
+              <div class="grado-row">
+                <div class="grado-label">
+                  <span class="grado-num">{{ grado.label }}</span>
+                  <span class="grado-count">{{ cursosPorGrado(nivel, grado.value).length }}</span>
+                </div>
+                <div class="cursos-lista">
+                  @for (curso of cursosPorGrado(nivel, grado.value); track curso.id) {
+                    <div class="curso-chip" [class.inactivo]="!curso.activo">
+                      <div class="chip-body">
+                        <span class="chip-nombre">{{ curso.nombre }}</span>
+                        @if (curso.profesorNombre) {
+                          <span class="chip-prof">
+                            <i class="pi pi-user"></i> {{ curso.profesorNombre }}
+                          </span>
+                        } @else {
+                          <span class="chip-prof sin">Sin docente</span>
+                        }
+                      </div>
+                      <div class="chip-actions">
+                        <p-button icon="pi pi-pencil" [text]="true" [rounded]="true"
+                          severity="secondary" size="small"
+                          (click)="openEdit(curso)"
+                          pTooltip="Editar" tooltipPosition="top" />
+                        <p-button icon="pi pi-trash" [text]="true" [rounded]="true"
+                          severity="danger" size="small"
+                          (click)="onDelete(curso)"
+                          pTooltip="Desactivar" tooltipPosition="top" />
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          }
+
+        </div>
+      }
+    }
+
+    @if (cursos().length === 0) {
+      <div class="empty-state">
+        <i class="pi pi-book"></i>
+        <p>No hay cursos registrados todavía.</p>
+        <p-button label="Crear el primero" [text]="true" (click)="openCreate()" />
+      </div>
+    }
+  }
+
+  <app-confirm-modal
+    [(visible)]="showConfirm"
+    title="Desactivar curso"
+    [message]="'¿Desactivar ' + (pendingCurso?.nombre ?? '') + '?'"
+    confirmLabel="Desactivar"
+    (confirm)="executeDelete()"
+    (cancel)="showConfirm = false" />
+
+  <app-modal
+    [(visible)]="showModal"
+    [title]="editingCurso ? 'Editar curso' : 'Nuevo curso'"
+    [subtitle]="editingCurso ? editingCurso.nombre : 'Completá los campos para registrar el curso'">
+    @if (showModal) {
+      <app-curso-form [curso]="editingCurso" (save)="onSave($event)" (cancel)="showModal = false" />
+    }
+  </app-modal>
+</div>

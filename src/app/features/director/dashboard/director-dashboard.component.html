@@ -1,0 +1,148 @@
+<div class="dashboard">
+
+  <div class="dashboard-header">
+    <div class="welcome-section">
+      <h1>Panel de Dirección</h1>
+      <p class="subtitle">Bienvenido, {{ nombreDirector() }} — aquí está el resumen de hoy</p>
+    </div>
+    <div class="header-actions">
+      <p-button label="Nueva Matrícula" icon="pi pi-plus" routerLink="/director/profesores" />
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    @if (loading()) {
+      @for (i of [1,2,3,4]; track i) {
+        <p-card styleClass="stat-card">
+          <p-skeleton height="4rem" />
+        </p-card>
+      }
+    } @else {
+      <p-card styleClass="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon-wrapper stat-icon-blue">
+            <i class="pi pi-users"></i>
+          </div>
+          <div class="stat-details">
+            <span class="stat-label">Total Estudiantes</span>
+            <span class="stat-value">{{ data()?.totalEstudiantes ?? 0 }}</span>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card styleClass="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon-wrapper stat-icon-green">
+            <i class="pi pi-id-card"></i>
+          </div>
+          <div class="stat-details">
+            <span class="stat-label">Total Profesores</span>
+            <span class="stat-value">{{ data()?.totalProfesores ?? 0 }}</span>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card styleClass="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon-wrapper stat-icon-orange">
+            <i class="pi pi-book"></i>
+          </div>
+          <div class="stat-details">
+            <span class="stat-label">Cursos Activos</span>
+            <span class="stat-value">{{ data()?.totalCursos ?? 0 }}</span>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card styleClass="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon-wrapper stat-icon-red">
+            <i class="pi pi-wallet"></i>
+          </div>
+          <div class="stat-details">
+            <span class="stat-label">Pagos Pendientes</span>
+            <span class="stat-value">{{ data()?.pagosPendientes ?? 0 }}</span>
+            @if ((data()?.pagosPendientes ?? 0) > 0) {
+              <span class="stat-badge">Requiere atención</span>
+            }
+          </div>
+        </div>
+      </p-card>
+    }
+  </div>
+
+  <!-- Quick Actions -->
+  <p-card header="Acciones Rápidas" styleClass="actions-card">
+    <div class="actions-grid">
+      <a routerLink="/director/pagos" class="quick-action">
+        <div class="action-icon action-icon-blue">
+          <i class="pi pi-wallet"></i>
+        </div>
+        <span class="action-label">Gestionar Pagos</span>
+        <span class="action-desc">Ver y gestionar cobros</span>
+      </a>
+
+      <a routerLink="/director/cursos" class="quick-action">
+        <div class="action-icon action-icon-green">
+          <i class="pi pi-book"></i>
+        </div>
+        <span class="action-label">Administrar Cursos</span>
+        <span class="action-desc">Crear y editar cursos</span>
+      </a>
+
+      <a routerLink="/director/profesores" class="quick-action">
+        <div class="action-icon action-icon-purple">
+          <i class="pi pi-users"></i>
+        </div>
+        <span class="action-label">Gestionar Profesores</span>
+        <span class="action-desc">Administrar staff</span>
+      </a>
+
+      <a routerLink="/director/reportes" class="quick-action">
+        <div class="action-icon action-icon-orange">
+          <i class="pi pi-chart-bar"></i>
+        </div>
+        <span class="action-label">Ver Reportes</span>
+        <span class="action-desc">Estadísticas generales</span>
+      </a>
+    </div>
+  </p-card>
+
+  <!-- Actividad reciente -->
+  <div class="recent-grid">
+    <p-card header="Últimas Matrículas" styleClass="recent-card">
+      <div class="recent-list">
+        @for (item of ultimasMatriculas; track item.nombre) {
+          <div class="recent-item">
+            <p-avatar [label]="item.iniciales" shape="circle" size="large"
+              [style]="{'background-color': item.color, 'color': 'white'}" />
+            <div class="recent-info">
+              <span class="recent-name">{{ item.nombre }}</span>
+              <span class="recent-detail">{{ item.curso }} · {{ item.fecha }}</span>
+            </div>
+            <p-tag [value]="item.estado"
+              [severity]="item.estado === 'Confirmado' ? 'success' : 'warn'" />
+          </div>
+        }
+      </div>
+    </p-card>
+
+    <p-card header="Actividad Reciente" styleClass="recent-card">
+      <div class="activity-list">
+        @for (act of actividades; track act.descripcion) {
+          <div class="activity-item">
+            <div class="activity-icon" [ngClass]="act.tipo">
+              <i [class]="act.icono"></i>
+            </div>
+            <div class="activity-info">
+              <span class="activity-text">{{ act.descripcion }}</span>
+              <span class="activity-time">{{ act.tiempo }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </p-card>
+  </div>
+
+</div>

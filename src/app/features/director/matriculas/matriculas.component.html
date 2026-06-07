@@ -1,0 +1,171 @@
+<div class="page">
+  <p-toast />
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Matrículas</h1>
+      <p class="page-subtitle">{{ matriculas().length }} alumno{{ matriculas().length !== 1 ? 's' : '' }} matriculado{{ matriculas().length !== 1 ? 's' : '' }}</p>
+    </div>
+    <button class="btn-primary" (click)="showForm = true">
+      <i class="pi pi-plus"></i> Nueva matrícula
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton-table">
+      @for (i of [1,2,3,4,5]; track i) {
+        <div class="skeleton-row">
+          <p-skeleton height="1rem" width="25%" />
+          <p-skeleton height="1rem" width="12%" />
+          <p-skeleton height="1rem" width="10%" />
+          <p-skeleton height="1rem" width="10%" />
+          <p-skeleton height="1rem" width="10%" />
+        </div>
+      }
+    </div>
+  } @else if (matriculas().length === 0) {
+    <div class="empty-state">
+      <i class="pi pi-graduation-cap"></i>
+      <p>No hay alumnos matriculados todavía.</p>
+      <button class="btn-ghost" (click)="showForm = true">Registrar el primero</button>
+    </div>
+  } @else {
+    <div class="table-card">
+      <p-table
+        [value]="matriculas()"
+        [paginator]="true"
+        [rows]="15"
+        styleClass="p-datatable-striped"
+        [tableStyle]="{'min-width': '48rem'}">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Alumno</th>
+            <th>Grado / Nivel</th>
+            <th>Matrícula</th>
+            <th>Mensualidad</th>
+            <th>Año</th>
+            <th>Pago</th>
+            <th>Fecha registro</th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-m>
+          <tr>
+            <td>
+              <div class="student-cell">
+                <div class="student-avatar">{{ initials(m.estudianteNombre) }}</div>
+                <span>{{ m.estudianteNombre }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="grado-badge">{{ m.grado }}° {{ nivelLabel(m.nivel) }}</span>
+            </td>
+            <td class="monto-cell">S/ {{ m.montoMatricula | number:'1.2-2' }}</td>
+            <td class="monto-cell">S/ {{ m.montoMensualidad | number:'1.2-2' }}</td>
+            <td>{{ m.anio }}</td>
+            <td>
+              <p-tag
+                [value]="m.estadoPago === 'PAGADO' ? 'Pagado' : 'Pendiente'"
+                [severity]="m.estadoPago === 'PAGADO' ? 'success' : 'warn'" />
+            </td>
+            <td class="fecha-cell">{{ m.fechaCreacion | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <div class="row-actions">
+                @if (m.estadoPago === 'PENDIENTE') {
+                  <button class="action-btn pay" (click)="onPagarMatricula(m)"
+                    pTooltip="Registrar pago de matrícula" tooltipPosition="top">
+                    <i class="pi pi-check-circle"></i>
+                  </button>
+                }
+                <button class="action-btn" (click)="verDetalle(m)"
+                  pTooltip="Ver detalle" tooltipPosition="top">
+                  <i class="pi pi-eye"></i>
+                </button>
+                <button class="action-btn danger" (click)="onDelete(m)"
+                  pTooltip="Eliminar" tooltipPosition="top">
+                  <i class="pi pi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="8" class="text-center p-8">No se encontraron matrículas.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+
+  <!-- Modal formulario -->
+  <app-modal
+    [(visible)]="showForm"
+    title="Nueva Matrícula"
+    subtitle="Registrá al padre o tutor y sus hijos"
+    width="900px">
+    @if (showForm) {
+      <app-matricula-form
+        (save)="onSaved($event)"
+        (cancel)="showForm = false" />
+    }
+  </app-modal>
+
+  <!-- Modal detalle -->
+  <app-modal
+    [(visible)]="showDetalle"
+    [title]="detalle?.estudianteNombre ?? ''"
+    [subtitle]="detalle ? (detalle.grado + '° ' + nivelLabel(detalle.nivel) + ' · ' + detalle.anio) : ''"
+    width="480px">
+    @if (showDetalle && detalle) {
+      <div class="detalle-body">
+        <div class="detalle-row">
+          <span class="detalle-lbl">Estado matrícula</span>
+          <p-tag value="ACTIVA" severity="success" />
+        </div>
+        <div class="detalle-row">
+          <span class="detalle-lbl">Estado de pago</span>
+          <p-tag
+            [value]="detalle.estadoPago === 'PAGADO' ? 'Pagado' : 'Pendiente'"
+            [severity]="detalle.estadoPago === 'PAGADO' ? 'success' : 'warn'" />
+        </div>
+        <div class="detalle-divider"></div>
+        <div class="detalle-row">
+          <span class="detalle-lbl">Monto matrícula</span>
+          <span class="detalle-monto">S/ {{ detalle.montoMatricula | number:'1.2-2' }}</span>
+        </div>
+        <div class="detalle-row">
+          <span class="detalle-lbl">Monto mensualidad</span>
+          <span class="detalle-monto">S/ {{ detalle.montoMensualidad | number:'1.2-2' }}</span>
+        </div>
+        <div class="detalle-divider"></div>
+        <div class="detalle-row">
+          <span class="detalle-lbl">Fecha de registro</span>
+          <span class="detalle-val">{{ detalle.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="detalle-hint">
+          <i class="pi pi-info-circle"></i>
+          Los cursos se asignan automáticamente según el grado y nivel del alumno.
+        </div>
+      </div>
+    }
+  </app-modal>
+
+  <!-- Confirmar pago matrícula -->
+  <app-confirm-modal
+    [(visible)]="showConfirmPago"
+    title="Registrar pago de matrícula"
+    [message]="'¿Confirmar el pago de la matrícula de ' + (pendingPago?.estudianteNombre ?? '') + '? Se generarán las mensualidades del año escolar.'"
+    confirmLabel="Confirmar pago"
+    (confirm)="executePago()"
+    (cancel)="showConfirmPago = false" />
+
+  <!-- Confirmar eliminación -->
+  <app-confirm-modal
+    [(visible)]="showConfirm"
+    title="Eliminar matrícula"
+    [message]="'¿Eliminar la matrícula de ' + (pendingMatricula?.estudianteNombre ?? '') + '?'"
+    confirmLabel="Eliminar"
+    (confirm)="executeDelete()"
+    (cancel)="showConfirm = false" />
+</div>

@@ -1,0 +1,85 @@
+.page-container {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title-section h1 { font-size: 1.75rem; margin: 0; color: #111827; }
+.subtitle { color: #6b7280; margin: 0.25rem 0 0; }
+.actions { display: flex; gap: 0.75rem; }
+
+.padre-cell { display: flex; align-items: center; gap: 1rem; }
+
+.padre-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.padre-name { font-weight: 600; color: #111827; }
+.padre-email { font-size: 0.75rem; color: #6b7280; }
+.table-actions { display: flex; gap: 0.15rem; }
+
+.hijo-body {
+  padding: 1.5rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.hijo-hint { font-size: 0.8125rem; color: #9ca3af; margin: 0; }
+
+.hijo-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+
+  label { font-size: 0.8125rem; font-weight: 500; color: #374151; }
+  input { width: 100%; border-radius: 8px; font-size: 0.875rem; }
+}
+
+.hijos-chips { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+
+.hijo-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: #e0e7ff;
+  color: #4338ca;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+}
+
+.chip-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6366f1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  font-size: 0.65rem;
+}
+
+.hijo-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+:host-context(.dark-mode) {
+  .title-section h1,
+  .padre-name { color: #f9fafb; }
+
+  .hijo-field label { color: #cbd5e1; }
+  .hijo-chip { background: #312e81; color: #a5b4fc; }
+}
