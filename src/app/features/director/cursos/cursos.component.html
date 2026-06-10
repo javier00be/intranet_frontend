@@ -8,10 +8,16 @@
       <p class="page-subtitle">{{ cursos().length }} curso{{ cursos().length !== 1 ? 's' : '' }} · {{ anioActual }}</p>
     </div>
     <div class="header-actions">
-      <p-iconfield>
-        <p-inputicon styleClass="pi pi-search" />
-        <input pInputText [(ngModel)]="searchTerm" placeholder="Buscar…" class="search-input" />
-      </p-iconfield>
+      <div class="nivel-filters">
+        @for (nivel of NIVELES; track nivel) {
+          <button class="nivel-chip"
+            [class.active]="isNivelActive(nivel)"
+            [style.--nc]="nivelColor(nivel)"
+            (click)="toggleNivel(nivel)">
+            {{ nivelLabel(nivel) }}
+          </button>
+        }
+      </div>
       <p-button label="Nuevo curso" icon="pi pi-plus" (click)="openCreate()" />
     </div>
   </div>
@@ -34,45 +40,46 @@
               <div class="nivel-pill">{{ nivelLabel(nivel) }}</div>
               <span class="nivel-count">{{ cursosPorNivel(nivel).length }} curso{{ cursosPorNivel(nivel).length !== 1 ? 's' : '' }}</span>
             </div>
+            <p-iconfield>
+              <p-inputicon styleClass="pi pi-search" />
+              <input pInputText [(ngModel)]="searchNivel[nivel]"
+                placeholder="Buscar en {{ nivelLabel(nivel) }}…"
+                class="nivel-search" />
+            </p-iconfield>
           </div>
 
-          <!-- Filas de grado -->
-          @for (grado of GRADOS_POR_NIVEL[nivel]; track grado.value) {
-            @if (cursosPorGrado(nivel, grado.value).length > 0) {
-              <div class="grado-row">
-                <div class="grado-label">
-                  <span class="grado-num">{{ grado.label }}</span>
-                  <span class="grado-count">{{ cursosPorGrado(nivel, grado.value).length }}</span>
+          <!-- Cursos del nivel -->
+          <div class="cursos-list">
+            @for (curso of cursosPorNivel(nivel); track curso.id) {
+              <div class="curso-row" [class.inactivo]="!curso.activo">
+                <div class="curso-info">
+                  <span class="curso-nombre">{{ curso.nombre }}</span>
+                  <div class="curso-meta">
+                    @for (g of curso.grados; track g) {
+                      <span class="grado-badge">{{ gradoLabel(nivel, g) }}</span>
+                    }
+                    @if (curso.profesorNombres?.length) {
+                      @for (nombre of curso.profesorNombres; track nombre) {
+                        <span class="prof-tag"><i class="pi pi-user"></i> {{ nombre }}</span>
+                      }
+                    } @else {
+                      <span class="prof-tag sin">Sin docente</span>
+                    }
+                  </div>
                 </div>
-                <div class="cursos-lista">
-                  @for (curso of cursosPorGrado(nivel, grado.value); track curso.id) {
-                    <div class="curso-chip" [class.inactivo]="!curso.activo">
-                      <div class="chip-body">
-                        <span class="chip-nombre">{{ curso.nombre }}</span>
-                        @if (curso.profesorNombre) {
-                          <span class="chip-prof">
-                            <i class="pi pi-user"></i> {{ curso.profesorNombre }}
-                          </span>
-                        } @else {
-                          <span class="chip-prof sin">Sin docente</span>
-                        }
-                      </div>
-                      <div class="chip-actions">
-                        <p-button icon="pi pi-pencil" [text]="true" [rounded]="true"
-                          severity="secondary" size="small"
-                          (click)="openEdit(curso)"
-                          pTooltip="Editar" tooltipPosition="top" />
-                        <p-button icon="pi pi-trash" [text]="true" [rounded]="true"
-                          severity="danger" size="small"
-                          (click)="onDelete(curso)"
-                          pTooltip="Desactivar" tooltipPosition="top" />
-                      </div>
-                    </div>
-                  }
+                <div class="curso-actions">
+                  <p-button icon="pi pi-pencil" [text]="true" [rounded]="true"
+                    severity="secondary" size="small"
+                    (click)="openEdit(curso)"
+                    pTooltip="Editar" tooltipPosition="top" />
+                  <p-button icon="pi pi-trash" [text]="true" [rounded]="true"
+                    severity="danger" size="small"
+                    (click)="onDelete(curso)"
+                    pTooltip="Desactivar" tooltipPosition="top" />
                 </div>
               </div>
             }
-          }
+          </div>
 
         </div>
       }

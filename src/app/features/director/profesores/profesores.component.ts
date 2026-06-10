@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal , ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
@@ -20,6 +20,7 @@ import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/
 import { forkJoin } from 'rxjs';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-profesores',
   standalone: true,
   imports: [
@@ -61,7 +62,7 @@ export class ProfesoresComponent implements OnInit {
     });
   }
 
-  cursosDeProfesor(profesorId: number): Curso[] { return this.todosLosCursos.filter(c => c.profesorId === profesorId); }
+  cursosDeProfesor(profesorId: number): Curso[] { return this.todosLosCursos.filter(c => c.profesorIds?.includes(profesorId) ?? false); }
 
   showCreateDialog() { this.displayCreate = true; }
 
@@ -69,7 +70,9 @@ export class ProfesoresComponent implements OnInit {
 
   showCursosDialog(profe: Profesor) {
     this.selectedProfe = profe;
-    this.cursosSeleccionados = new Set(this.todosLosCursos.filter(c => c.profesorId === profe.id).map(c => c.id!));
+    this.cursosSeleccionados = new Set(
+      this.todosLosCursos.filter(c => c.profesorIds?.includes(profe.id!) ?? false).map(c => c.id!)
+    );
     this.displayCursos = true;
   }
 
@@ -81,24 +84,25 @@ export class ProfesoresComponent implements OnInit {
 
   guardarAsignacion() {
     if (!this.selectedProfe?.id) return;
-    const profesorId = this.selectedProfe.id;
-    const updates = this.todosLosCursos
-      .filter(c => this.cursosSeleccionados.has(c.id!) !== (c.profesorId === profesorId))
-      .map(c => this.cursoService.update(c.id!, { ...c, profesorId: this.cursosSeleccionados.has(c.id!) ? profesorId : undefined }));
-
-    if (!updates.length) { this.displayCursos = false; return; }
-
     this.guardandoCursos.set(true);
-    forkJoin(updates).subscribe({
-      next: () => { this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Cursos asignados correctamente' }); this.guardandoCursos.set(false); this.displayCursos = false; this.loadAll(); },
-      error: () => { this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo guardar la asignación' }); this.guardandoCursos.set(false); }
+    this.profesorService.assignCursos(this.selectedProfe.id, Array.from(this.cursosSeleccionados)).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Cursos asignados correctamente' });
+        this.guardandoCursos.set(false);
+        this.displayCursos = false;
+        this.loadAll();
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo guardar la asignación' });
+        this.guardandoCursos.set(false);
+      }
     });
   }
 
   async onCreateProfe(data: ProfesorFormOutput) {
     const reg = await this.authService.adminRegisterUser({ email: data.email, password: data.password!, nombre: data.nombre, apellido: data.apellido, rol: 'PROFESOR' });
     if (!reg.success) { this.messageService.add({ severity: 'error', summary: 'Error', detail: reg.message }); return; }
-    this.profesorService.create({ usuario: { id: reg.userId }, especialidad: data.especialidad, telefono: data.telefono }).subscribe({
+    this.profesorService.create({ usuario: { id: reg.userId }, telefono: data.telefono }).subscribe({
       next: () => { this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Profesor registrado' }); this.displayCreate = false; this.loadAll(); },
       error: () => { this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo crear el perfil' }); }
     });
@@ -106,7 +110,7 @@ export class ProfesoresComponent implements OnInit {
 
   onUpdateProfe(data: ProfesorFormOutput) {
     if (!this.selectedProfe) return;
-    this.profesorService.update(this.selectedProfe.id!, { usuario: { id: this.selectedProfe.usuario.id }, especialidad: data.especialidad, telefono: data.telefono }).subscribe({
+    this.profesorService.update(this.selectedProfe.id!, { usuario: { id: this.selectedProfe.usuario.id }, telefono: data.telefono }).subscribe({
       next: () => { this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Profesor actualizado' }); this.displayEdit = false; this.loadAll(); },
       error: () => { this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar' }); }
     });

@@ -32,7 +32,6 @@ export interface Estudiante {
 export interface Profesor {
   id: number;
   usuario: User;
-  especialidad: string;
   telefono: string;
   cursosAsignados: number[];
 }

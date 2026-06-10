@@ -1,9 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, signal , ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
 import { InputMaskModule } from 'primeng/inputmask';
 import { PasswordModule } from 'primeng/password';
 import { TooltipModule } from 'primeng/tooltip';
@@ -11,11 +10,12 @@ import { Profesor, ProfesorFormOutput } from '../../../core/services/profesor.se
 import { DniService } from '../../../core/services/dni.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-profesor-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonModule, InputTextModule, SelectModule, InputMaskModule, PasswordModule, TooltipModule],
+  imports: [CommonModule, ReactiveFormsModule, ButtonModule, InputTextModule, InputMaskModule, PasswordModule, TooltipModule],
   template: `
-    <form [formGroup]="profeForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4 pt-4">
+    <form [formGroup]="profeForm" (ngSubmit)="onSubmit()" class="form-body">
 
       @if (!editMode) {
         <div class="flex flex-col gap-2">
@@ -60,15 +60,9 @@ import { DniService } from '../../../core/services/dni.service';
         </div>
       }
 
-      <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col gap-2">
-          <label class="font-semibold text-sm">Teléfono</label>
-          <p-inputmask mask="999-999-999" formControlName="telefono" placeholder="999-999-999" />
-        </div>
-        <div class="flex flex-col gap-2">
-          <label class="font-semibold text-sm">Especialidad</label>
-          <p-select [options]="especialidades" formControlName="especialidad" placeholder="Seleccionar" />
-        </div>
+      <div class="flex flex-col gap-2">
+        <label class="font-semibold text-sm">Teléfono</label>
+        <p-inputmask mask="999-999-999" formControlName="telefono" placeholder="999-999-999" />
       </div>
 
       <div class="flex justify-end gap-2 mt-4">
@@ -78,6 +72,13 @@ import { DniService } from '../../../core/services/dni.service';
     </form>
   `,
   styles: [`
+    .form-body {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.5rem 1.75rem 1.75rem;
+    }
+
     .info-banner {
       background: #f0f4ff;
       border: 1px solid #c7d2fe;
@@ -87,6 +88,15 @@ import { DniService } from '../../../core/services/dni.service';
       align-items: center;
       color: #3730a3;
       font-weight: 500;
+    }
+
+    :host ::ng-deep input.p-inputtext,
+    :host ::ng-deep .p-inputmask,
+    :host ::ng-deep .p-password,
+    :host ::ng-deep .p-select {
+      width: 100%;
+      border-radius: 8px;
+      font-size: 0.875rem;
     }
   `]
 })
@@ -102,23 +112,12 @@ export class ProfesorFormComponent implements OnInit {
   dniLoading = signal(false);
   profeForm!: FormGroup;
 
-  especialidades = [
-    { label: 'Matemática', value: 'Matemática' },
-    { label: 'Comunicación', value: 'Comunicación' },
-    { label: 'Ciencias', value: 'Ciencias' },
-    { label: 'Sociales', value: 'Sociales' },
-    { label: 'Inglés', value: 'Inglés' },
-    { label: 'Educación Física', value: 'Educación Física' },
-    { label: 'Arte', value: 'Arte' }
-  ];
-
   ngOnInit() {
     this.editMode = !!this.profesor;
 
     if (this.editMode) {
       this.profeForm = this.fb.group({
-        telefono: [this.profesor!.telefono ?? '', [Validators.required]],
-        especialidad: [this.profesor!.especialidad ?? '', [Validators.required]]
+        telefono: [this.profesor!.telefono ?? '', [Validators.required]]
       });
     } else {
       this.profeForm = this.fb.group({
@@ -127,8 +126,7 @@ export class ProfesorFormComponent implements OnInit {
         apellido:     ['', [Validators.required]],
         email:        ['', [Validators.required, Validators.email]],
         password:     ['', [Validators.required, Validators.minLength(6)]],
-        telefono:     ['', [Validators.required]],
-        especialidad: ['', [Validators.required]]
+        telefono:     ['', [Validators.required]]
       });
     }
   }

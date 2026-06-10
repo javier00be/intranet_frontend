@@ -1,0 +1,76 @@
+<p-toast />
+
+<div class="dashboard-wrapper">
+
+  <!-- Alertas generales -->
+  <div class="alertas-banner" *ngIf="tieneAlertas() && !loading()">
+    <i class="pi pi-exclamation-triangle"></i>
+    <span>Hay situaciones que requieren tu atención en uno o más de tus hijos.</span>
+  </div>
+
+  <!-- Skeleton -->
+  <div class="hijos-grid" *ngIf="loading()">
+    <div class="hijo-card skeleton-card" *ngFor="let _ of [1,2]">
+      <p-skeleton width="100%" height="200px" />
+    </div>
+  </div>
+
+  <!-- Estado vacío -->
+  <div class="empty-state" *ngIf="!loading() && hijos().length === 0">
+    <i class="pi pi-users"></i>
+    <p>No hay hijos registrados en tu cuenta.</p>
+  </div>
+
+  <!-- Cards por hijo -->
+  <div class="hijos-grid" *ngIf="!loading() && hijos().length > 0">
+    <div class="hijo-card" *ngFor="let h of hijos()">
+
+      <!-- Encabezado -->
+      <div class="card-header">
+        <p-avatar [label]="initials(h)" size="large" shape="circle" />
+        <div class="info">
+          <h3>{{ h.estudiante.usuario?.nombre }} {{ h.estudiante.usuario?.apellido }}</h3>
+          <span class="sub">{{ nivelLabel(h.estudiante.nivel ?? '') }} — Grado {{ h.estudiante.grado }}</span>
+        </div>
+        <!-- badges de alerta -->
+        <div class="badges">
+          <p-tag *ngIf="h.alertaNotas" severity="danger" value="Notas bajas" icon="pi pi-exclamation-circle" />
+          <p-tag *ngIf="h.alertaAsistencia" severity="warn" value="Asistencia baja" icon="pi pi-clock" />
+          <p-tag *ngIf="h.alertaPago" severity="danger" value="Cuota vencida" icon="pi pi-credit-card" />
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat">
+          <span class="label">Promedio</span>
+          <span class="value" [style.color]="h.promedio !== null ? promedioColor(h.promedio) : 'var(--text-color-secondary)'">
+            {{ h.promedio !== null ? h.promedio : '—' }}
+          </span>
+        </div>
+        <div class="stat">
+          <span class="label">Asistencia</span>
+          <span class="value" [style.color]="h.asistenciaPct !== null ? (h.asistenciaPct >= 70 ? 'var(--green-500)' : 'var(--red-500)') : 'var(--text-color-secondary)'">
+            {{ h.asistenciaPct !== null ? (h.asistenciaPct + '%') : '—' }}
+          </span>
+        </div>
+        <div class="stat">
+          <span class="label">Próx. cuota</span>
+          <span class="value">
+            <p-tag *ngIf="h.proximaCuota" [severity]="estadoSeverity(h.proximaCuota.estadoPago)" [value]="h.proximaCuota.mes" />
+            <span *ngIf="!h.proximaCuota" style="color: var(--green-500)">Al día</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="card-actions">
+        <p-button label="Notas" icon="pi pi-book" severity="secondary" size="small" (onClick)="verCalificaciones(h.estudiante.id)" />
+        <p-button label="Asistencia" icon="pi pi-calendar-times" severity="secondary" size="small" (onClick)="verAsistencia(h.estudiante.id)" />
+        <p-button label="Pagos" icon="pi pi-credit-card" [severity]="h.alertaPago ? 'danger' : 'secondary'" size="small" (onClick)="verPagos(h.estudiante.id)" />
+      </div>
+
+    </div>
+  </div>
+
+</div>

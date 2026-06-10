@@ -10,7 +10,9 @@ export const dashboardRedirectGuard: CanActivateFn = () => {
   if (user?.rol === 'director') {
     router.navigate(['/director/dashboard']);
   } else if (user?.rol === 'profesor') {
-    router.navigate(['/profesor/cursos']);
+    router.navigate(['/profesor/dashboard']);
+  } else if (user?.rol === 'padre') {
+    router.navigate(['/padre/dashboard']);
   } else if (user?.rol === 'estudiante') {
     router.navigate(['/estudiante/cursos']);
   } else {

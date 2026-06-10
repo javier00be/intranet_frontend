@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { User } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class JwtService {
@@ -18,37 +19,24 @@ export class JwtService {
     localStorage.removeItem(this.userKey);
   }
 
-  setUser(user: any): void {
+  setUser(user: User): void {
     localStorage.setItem(this.userKey, JSON.stringify(user));
   }
 
-  getUser(): any {
+  getUser(): User | null {
     const user = localStorage.getItem(this.userKey);
-    return user ? JSON.parse(user) : null;
+    return user ? (JSON.parse(user) as User) : null;
   }
 
   isTokenExpired(): boolean {
     const token = this.getToken();
     if (!token) return true;
-    
+
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       return payload.exp * 1000 < Date.now();
     } catch {
       return true;
     }
-  }
-
-  generateMockToken(user: any): string {
-    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-    const payload = btoa(JSON.stringify({
-      sub: user.id,
-      email: user.email,
-      rol: user.rol,
-      nombre: user.nombre,
-      exp: Math.floor(Date.now() / 1000) + 86400
-    }));
-    const signature = btoa('mock-signature');
-    return `${header}.${payload}.${signature}`;
   }
 }

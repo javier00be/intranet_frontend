@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal , ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -13,6 +13,7 @@ import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/
 import { MatriculaFormComponent } from '../../../shared/components/matricula-form/matricula-form.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-matriculas',
   standalone: true,
   imports: [

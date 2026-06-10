@@ -1,0 +1,162 @@
+<p-toast />
+
+<div class="historial-page">
+
+  @if (loading()) {
+    <div class="skeleton-wrapper">
+      <p-skeleton height="120px" borderRadius="16px" />
+      <div class="skeleton-row">
+        @for (_ of [1,2,3]; track $index) {
+          <p-skeleton height="90px" borderRadius="12px" />
+        }
+      </div>
+      <p-skeleton height="360px" borderRadius="12px" />
+    </div>
+  } @else if (estudiante()) {
+
+    <!-- Header del alumno -->
+    <div class="student-header">
+      <div class="header-left">
+        <button class="back-btn" (click)="back()">
+          <i class="pi pi-arrow-left"></i>
+          <span>Volver</span>
+        </button>
+        <div class="student-identity">
+          <p-avatar
+            [label]="initials(estudiante()!)"
+            shape="circle"
+            size="xlarge"
+            [style]="{ background: 'var(--accent)', color: 'white', fontWeight: '700', fontSize: '1.4rem' }" />
+          <div class="student-meta">
+            <h2>{{ estudiante()!.usuario?.nombre }} {{ estudiante()!.usuario?.apellido }}</h2>
+            <div class="student-tags">
+              <span class="meta-chip">{{ estudiante()!.grado }}° {{ estudiante()!.seccion }}</span>
+              <span class="meta-chip">{{ nivelLabel(estudiante()!.nivel ?? '') }}</span>
+              @if (estudiante()!.dni) {
+                <span class="meta-chip dni">DNI: {{ estudiante()!.dni }}</span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon notas"><i class="pi pi-star"></i></div>
+        <div class="stat-body">
+          <span class="stat-value">{{ promedio() ?? '—' }}</span>
+          <span class="stat-label">Promedio general</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon asistencia"><i class="pi pi-calendar-check"></i></div>
+        <div class="stat-body">
+          <span class="stat-value">{{ asistenciaPct() !== null ? asistenciaPct() + '%' : '—' }}</span>
+          <span class="stat-label">Asistencia</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon cursos"><i class="pi pi-book"></i></div>
+        <div class="stat-body">
+          <span class="stat-value">{{ calificaciones().length }}</span>
+          <span class="stat-label">Calificaciones</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab switcher -->
+    <div class="tab-container">
+      <div class="tab-header">
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === 'notas'"
+          (click)="activeTab = 'notas'">
+          <i class="pi pi-star-fill"></i>
+          Calificaciones
+        </button>
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === 'asistencias'"
+          (click)="activeTab = 'asistencias'">
+          <i class="pi pi-calendar"></i>
+          Asistencias
+        </button>
+      </div>
+
+      <!-- Tab: Calificaciones -->
+      @if (activeTab === 'notas') {
+        <p-table [value]="calificaciones()" [paginator]="calificaciones().length > 10" [rows]="10">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Curso</th>
+              <th>Tipo</th>
+              <th>Nota</th>
+              <th>Fecha</th>
+              <th>Observaciones</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-c>
+            <tr>
+              <td class="curso-name">{{ c.cursoNombre ?? '—' }}</td>
+              <td>
+                <p-tag [value]="tipoLabel(c.tipo ?? '')" [severity]="tipoSeverity(c.tipo ?? '')" />
+              </td>
+              <td>
+                <span class="valor-badge" [style.color]="valorColor(c.valor ?? 0)">
+                  {{ c.valor ?? '—' }}
+                </span>
+              </td>
+              <td>{{ c.fecha ? (c.fecha | date:'dd/MM/yyyy') : '—' }}</td>
+              <td class="obs-cell">{{ c.observaciones ?? '—' }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="5" class="empty-state">
+                <i class="pi pi-star"></i>
+                <p>Sin calificaciones registradas</p>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+
+      <!-- Tab: Asistencias -->
+      @if (activeTab === 'asistencias') {
+        <p-table [value]="asistencias()" [paginator]="asistencias().length > 10" [rows]="10">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Fecha</th>
+              <th>Curso</th>
+              <th>Estado</th>
+              <th>Observaciones</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-a>
+            <tr>
+              <td>{{ a.fecha ? (a.fecha | date:'dd/MM/yyyy') : '—' }}</td>
+              <td class="curso-name">{{ a.cursoNombre ?? '—' }}</td>
+              <td>
+                <p-tag
+                  [value]="a.presente ? 'Presente' : 'Ausente'"
+                  [severity]="a.presente ? 'success' : 'danger'" />
+              </td>
+              <td class="obs-cell">{{ a.observaciones ?? '—' }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="empty-state">
+                <i class="pi pi-calendar"></i>
+                <p>Sin asistencias registradas</p>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+    </div>
+
+  }
+</div>

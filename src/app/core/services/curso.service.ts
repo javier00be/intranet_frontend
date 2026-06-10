@@ -12,8 +12,8 @@ export interface Curso {
   nivel: NivelEducativo;
   grados: number[];
   seccion?: string;
-  profesorId?: number;
-  profesorNombre?: string;
+  profesorIds?: number[];
+  profesorNombres?: string[];
   anio?: number;
   activo?: boolean;
 }

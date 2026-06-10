@@ -1,10 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input , ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 
 export type StatColor = 'blue' | 'green' | 'orange' | 'red' | 'purple';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-stat-card',
   standalone: true,
   imports: [CommonModule, CardModule],

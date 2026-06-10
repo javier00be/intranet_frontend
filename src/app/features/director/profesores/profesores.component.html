@@ -18,7 +18,6 @@
       <ng-template pTemplate="header">
         <tr>
           <th>Profesor</th>
-          <th>Especialidad</th>
           <th>Contacto</th>
           <th>Cursos asignados</th>
           <th>Acciones</th>
@@ -36,7 +35,6 @@
               </div>
             </div>
           </td>
-          <td><p-tag [value]="profe.especialidad" severity="secondary" /></td>
           <td><span class="contact"><i class="pi pi-phone"></i> {{ profe.telefono }}</span></td>
           <td>
             <span class="cursos-count" [class.none]="cursosDeProfesor(profe.id!).length === 0">
@@ -53,7 +51,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr><td colspan="5" class="text-center p-8">No hay profesores registrados.</td></tr>
+        <tr><td colspan="4" class="text-center p-8">No hay profesores registrados.</td></tr>
       </ng-template>
     </p-table>
   </p-card>
@@ -88,7 +86,7 @@
   <app-modal
     [(visible)]="displayCursos"
     title="Cursos asignados"
-    [subtitle]="(selectedProfe?.usuario?.nombre ?? '') + ' · ' + (selectedProfe?.especialidad ?? '')"
+    [subtitle]="(selectedProfe?.usuario?.nombre ?? '') + ' ' + (selectedProfe?.usuario?.apellido ?? '')"
     width="540px">
     @if (displayCursos) {
       @if (loadingCursos()) {
@@ -106,8 +104,8 @@
                 <span class="curso-row-meta">
                   <span class="nivel-dot" [style.background]="nivelColor(curso.nivel)"></span>
                   {{ nivelLabel(curso.nivel) }} · {{ curso.grados.join('°, ') }}° {{ curso.seccion ?? '' }}
-                  @if (curso.profesorId && curso.profesorId !== selectedProfe?.id) {
-                    <span class="otro-prof"> · asignado a otro docente</span>
+                  @if (curso.profesorIds?.some(id => id !== selectedProfe?.id)) {
+                    <span class="otro-prof"> · con otro docente</span>
                   }
                 </span>
               </div>

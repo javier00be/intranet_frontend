@@ -1,0 +1,73 @@
+<p-toast />
+
+<div class="page-wrapper">
+
+  <!-- Selector de hijo -->
+  <div class="hijo-selector" *ngIf="!loading()">
+    <div
+      class="hijo-chip"
+      *ngFor="let h of hijos()"
+      [class.active]="selected()?.id === h.id"
+      (click)="selectHijo(h)">
+      <p-avatar [label]="initials(h)" shape="circle" size="normal" />
+      <span>{{ h.usuario?.nombre }} {{ h.usuario?.apellido }}</span>
+    </div>
+  </div>
+
+  <div class="hijo-selector" *ngIf="loading()">
+    <p-skeleton *ngFor="let _ of [1,2]" width="120px" height="40px" borderRadius="20px" />
+  </div>
+
+  <!-- Resumen deuda -->
+  <div class="deuda-banner" *ngIf="selected() && !loadingData() && totalPendiente > 0">
+    <i class="pi pi-exclamation-circle"></i>
+    <span>Total pendiente: <strong>S/ {{ totalPendiente | number:'1.2-2' }}</strong></span>
+  </div>
+  <div class="deuda-banner ok" *ngIf="selected() && !loadingData() && totalPendiente === 0 && mensualidades().length > 0">
+    <i class="pi pi-check-circle"></i>
+    <span>Todo al día — sin cuotas pendientes.</span>
+  </div>
+
+  <!-- Tabla mensualidades -->
+  <div class="table-container" *ngIf="selected()">
+    <p-table
+      [value]="mensualidades()"
+      [loading]="loadingData()"
+      dataKey="id"
+      styleClass="p-datatable-sm">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Mes</th>
+          <th>Año</th>
+          <th>Monto</th>
+          <th>Estado</th>
+          <th>Vencimiento</th>
+          <th>Pago</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-m>
+        <tr>
+          <td>{{ mesLabel(m.mes) }}</td>
+          <td>{{ m.anio }}</td>
+          <td>S/ {{ m.monto | number:'1.2-2' }}</td>
+          <td><p-tag [severity]="estadoSeverity(m.estadoPago)" [value]="m.estadoPago" /></td>
+          <td>{{ m.fechaVencimiento | date:'dd/MM/yyyy' }}</td>
+          <td>{{ m.fechaPago ? (m.fechaPago | date:'dd/MM/yyyy') : '—' }}</td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="6" class="empty-cell">No hay cuotas registradas</td></tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading() && !selected()">
+    <i class="pi pi-user"></i>
+    <p>Seleccioná un hijo para ver sus pagos.</p>
+  </div>
+
+</div>

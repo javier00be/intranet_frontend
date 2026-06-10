@@ -1,0 +1,76 @@
+<p-toast />
+
+<div class="page-wrapper">
+
+  <!-- Selector de hijo -->
+  <div class="hijo-selector" *ngIf="!loading()">
+    <div
+      class="hijo-chip"
+      *ngFor="let h of hijos()"
+      [class.active]="selected()?.id === h.id"
+      (click)="selectHijo(h)">
+      <p-avatar [label]="initials(h)" shape="circle" size="normal" />
+      <span>{{ h.usuario?.nombre }} {{ h.usuario?.apellido }}</span>
+    </div>
+  </div>
+
+  <!-- Skeleton selector -->
+  <div class="hijo-selector" *ngIf="loading()">
+    <p-skeleton *ngFor="let _ of [1,2]" width="120px" height="40px" borderRadius="20px" />
+  </div>
+
+  <!-- Resumen promedio -->
+  <div class="promedio-banner" *ngIf="selected() && !loadingNotas()">
+    <i class="pi pi-chart-line"></i>
+    <span>Promedio general:</span>
+    <strong [style.color]="promedio() !== null ? valorColor(promedio()!) : 'inherit'">
+      {{ promedio() !== null ? promedio() : 'Sin datos' }}
+    </strong>
+  </div>
+
+  <!-- Tabla de calificaciones -->
+  <div class="table-container" *ngIf="selected()">
+    <p-table
+      [value]="calificaciones()"
+      [loading]="loadingNotas()"
+      [paginator]="calificaciones().length > 10"
+      [rows]="10"
+      dataKey="id"
+      styleClass="p-datatable-sm">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Curso</th>
+          <th>Tipo</th>
+          <th>Nota</th>
+          <th>Fecha</th>
+          <th>Observaciones</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-c>
+        <tr>
+          <td>{{ c.cursoNombre }}</td>
+          <td><p-tag [severity]="tipoSeverity(c.tipo)" [value]="tipoLabel(c.tipo)" /></td>
+          <td>
+            <strong [style.color]="valorColor(c.valor)">{{ c.valor }}</strong>
+          </td>
+          <td>{{ c.fecha | date:'dd/MM/yyyy' }}</td>
+          <td class="obs">{{ c.observaciones || '—' }}</td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="5" class="empty-cell">No hay calificaciones registradas</td></tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+
+  <!-- No hijo seleccionado -->
+  <div class="empty-state" *ngIf="!loading() && !selected()">
+    <i class="pi pi-user"></i>
+    <p>Seleccioná un hijo para ver sus calificaciones.</p>
+  </div>
+
+</div>

@@ -1,5 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { User, UserRole } from '../models';
 import { JwtService } from './jwt.service';
 import { environment } from '../../../environments/environment';
@@ -72,10 +73,10 @@ export class AuthService {
     this.loading.set(true);
 
     try {
-      const response = await this.http.post<BackendAuthResponse>(`${API_URL}/api/auth/login`, {
+      const response = await firstValueFrom(this.http.post<BackendAuthResponse>(`${API_URL}/api/auth/login`, {
         email,
         password
-      }).toPromise();
+      }));
 
       if (response?.success && response.token && response.user) {
         const user: User = {
@@ -114,13 +115,13 @@ export class AuthService {
     this.loading.set(true);
 
     try {
-      const response = await this.http.post<BackendAuthResponse>(`${API_URL}/api/auth/register`, {
+      const response = await firstValueFrom(this.http.post<BackendAuthResponse>(`${API_URL}/api/auth/register`, {
         email: data.email,
         password: data.password,
         nombre: data.nombre,
         apellido: data.apellido,
         rol: data.rol?.toUpperCase() || 'ESTUDIANTE'
-      }).toPromise();
+      }));
 
       if (response?.success && response.token && response.user) {
         const user: User = {
@@ -159,9 +160,9 @@ export class AuthService {
     this.loading.set(true);
 
     try {
-      const response = await this.http.post<BackendAuthResponse>(`${API_URL}/api/auth/forgot-password`, {
+      const response = await firstValueFrom(this.http.post<BackendAuthResponse>(`${API_URL}/api/auth/forgot-password`, {
         email
-      }).toPromise();
+      }));
 
       this.loading.set(false);
       
@@ -184,13 +185,13 @@ export class AuthService {
     rol: 'PROFESOR' | 'PADRE';
   }): Promise<{success: boolean; userId?: number; message?: string}> {
     try {
-      const response = await this.http.post<BackendAuthResponse>(`${API_URL}/api/auth/register`, {
+      const response = await firstValueFrom(this.http.post<BackendAuthResponse>(`${API_URL}/api/auth/register`, {
         email: data.email,
         password: data.password,
         nombre: data.nombre,
         apellido: data.apellido,
         rol: data.rol
-      }).toPromise();
+      }));
 
       if (response?.success && response.user) {
         return {success: true, userId: response.user.id};

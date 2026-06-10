@@ -25,6 +25,10 @@ export class PadreService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/api/padres`;
 
+  getMe(): Observable<Padre> {
+    return this.http.get<Padre>(`${this.apiUrl}/me`);
+  }
+
   getAll(): Observable<Padre[]> {
     return this.http.get<Padre[]>(this.apiUrl);
   }

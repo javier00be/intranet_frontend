@@ -1,6 +1,7 @@
-import { Component, inject, computed, signal } from '@angular/core';
+import { Component, inject, computed, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
@@ -17,6 +18,7 @@ interface MenuItem {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-layout',
   standalone: true,
   imports: [CommonModule, RouterModule, ButtonModule, AvatarModule, MenuModule, RippleModule, TooltipModule],
@@ -132,8 +134,15 @@ export class LayoutComponent {
   authService = inject(AuthService);
   themeService = inject(ThemeService);
   private router = inject(Router);
-  
+
   sidebarCollapsed = signal(false);
+  private currentUrl = signal(this.router.url);
+
+  constructor() {
+    this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd)
+    ).subscribe(e => this.currentUrl.set((e as NavigationEnd).urlAfterRedirects));
+  }
 
   menuItems = computed<MenuItem[]>(() => {
     const user = this.authService.user();
@@ -147,18 +156,19 @@ export class LayoutComponent {
         { label: 'Cursos',     icon: 'pi-book',           routerLink: '/director/cursos'      },
         { label: 'Profesores', icon: 'pi-users',          routerLink: '/director/profesores'  },
         { label: 'Padres',     icon: 'pi-heart',          routerLink: '/director/padres'      },
+        { label: 'Estudiantes', icon: 'pi-graduation-cap', routerLink: '/director/estudiantes' },
         { label: 'Reportes',   icon: 'pi-chart-bar',      routerLink: '/director/reportes'    }
       ];
     }
     
     if (rol === 'profesor') {
       return [
-        { label: 'Dashboard', icon: 'pi-home', routerLink: '/dashboard' },
-        { label: 'Mis Cursos', icon: 'pi-book', routerLink: '/profesor/cursos' },
-        { label: 'Tareas', icon: 'pi-file', routerLink: '/profesor/tareas' },
-        { label: 'Alumnos', icon: 'pi-users', routerLink: '/profesor/alumnos' },
-        { label: 'Calendario', icon: 'pi-calendar', routerLink: '/profesor/calendario' },
-        { label: 'Notas', icon: 'pi-chart-bar', routerLink: '/profesor/notas' }
+        { label: 'Dashboard',  icon: 'pi-home',      routerLink: '/profesor/dashboard'  },
+        { label: 'Mis Cursos', icon: 'pi-book',       routerLink: '/profesor/cursos'     },
+        { label: 'Alumnos',    icon: 'pi-users',      routerLink: '/profesor/alumnos'    },
+        { label: 'Notas',      icon: 'pi-chart-bar',  routerLink: '/profesor/notas'      },
+        { label: 'Tareas',     icon: 'pi-file',       routerLink: '/profesor/tareas'     },
+        { label: 'Calendario', icon: 'pi-calendar',   routerLink: '/profesor/calendario' }
       ];
     }
     
@@ -187,7 +197,7 @@ export class LayoutComponent {
   });
 
   currentPageTitle = computed(() => {
-    const url = this.router.url;
+    const url = this.currentUrl();
     const user = this.authService.user();
     
     if (url.includes('dashboard')) {
@@ -206,11 +216,18 @@ export class LayoutComponent {
     if (url.includes('profesores')) return 'Gestión de Profesores';
     if (url.includes('/director/padres')) return 'Gestión de Padres';
     if (url.includes('reportes')) return 'Reportes';
+    if (url.includes('/director/estudiantes/')) return 'Historial del Alumno';
+    if (url.includes('/director/estudiantes')) return 'Estudiantes';
     if (url.includes('/profesor/cursos')) return 'Mis Cursos';
     if (url.includes('/profesor/tareas')) return 'Gestión de Tareas';
     if (url.includes('/profesor/alumnos')) return 'Mis Alumnos';
     if (url.includes('/profesor/calendario')) return 'Calendario';
     if (url.includes('/profesor/notas')) return 'Registro de Notas';
+    if (url.includes('/padre/hijos')) return 'Mis Hijos';
+    if (url.includes('/padre/calificaciones')) return 'Notas de mis Hijos';
+    if (url.includes('/padre/asistencia')) return 'Asistencia de mis Hijos';
+    if (url.includes('/padre/pagos')) return 'Estado de Pagos';
+    if (url.includes('/padre/chat')) return 'Chat con Profesores';
     if (url.includes('/estudiante/cursos')) return 'Mis Cursos';
     if (url.includes('/estudiante/tareas')) return 'Mis Tareas';
     if (url.includes('/estudiante/calendario')) return 'Calendario';

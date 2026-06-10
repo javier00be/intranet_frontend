@@ -7,7 +7,6 @@ import { UsuarioInfo } from '../models';
 export interface Profesor {
   id?: number;
   usuario: UsuarioInfo;
-  especialidad: string;
   telefono: string;
   activo?: boolean;
 }
@@ -18,7 +17,6 @@ export interface ProfesorFormOutput {
   email: string;
   password?: string;
   telefono: string;
-  especialidad: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -48,5 +46,9 @@ export class ProfesorService {
 
   reactivate(id: number): Observable<void> {
     return this.http.patch<void>(`${this.apiUrl}/${id}/reactivar`, {});
+  }
+
+  assignCursos(profesorId: number, cursoIds: number[]): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${profesorId}/cursos`, cursoIds);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -10,6 +10,7 @@ import { DashboardService, DashboardData } from '../../../core/services/dashboar
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-director-dashboard',
   standalone: true,
   imports: [CommonModule, RouterModule, CardModule, ButtonModule, AvatarModule, TagModule, SkeletonModule],
@@ -23,10 +24,7 @@ export class DirectorDashboardComponent implements OnInit {
   loading = signal(true);
   data = signal<DashboardData | null>(null);
 
-  nombreDirector = () => {
-    const user = this.authService.user();
-    return user ? user.nombre : '';
-  };
+  nombreDirector = computed(() => this.authService.user()?.nombre ?? '');
 
   ngOnInit() {
     const user = this.authService.user();

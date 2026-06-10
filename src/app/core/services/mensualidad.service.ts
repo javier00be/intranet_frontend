@@ -31,6 +31,10 @@ export class MensualidadService {
     return this.http.get<MensualidadDTO[]>(`${this.apiUrl}/matricula/${matriculaId}`);
   }
 
+  getByEstudiante(estudianteId: number): Observable<MensualidadDTO[]> {
+    return this.http.get<MensualidadDTO[]>(`${this.apiUrl}/estudiante/${estudianteId}`);
+  }
+
   pagar(id: number): Observable<MensualidadDTO> {
     return this.http.patch<MensualidadDTO>(`${this.apiUrl}/${id}/pagar`, {});
   }

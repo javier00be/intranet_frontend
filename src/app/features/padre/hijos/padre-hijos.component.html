@@ -1,0 +1,35 @@
+<p-toast />
+
+<div class="hijos-wrapper">
+
+  <!-- Skeleton -->
+  <div class="hijos-grid" *ngIf="loading()">
+    <p-skeleton *ngFor="let _ of [1,2]" height="180px" borderRadius="12px" />
+  </div>
+
+  <!-- Empty -->
+  <div class="empty-state" *ngIf="!loading() && hijos().length === 0">
+    <i class="pi pi-users"></i>
+    <p>No hay hijos registrados en tu cuenta.</p>
+  </div>
+
+  <!-- Cards -->
+  <div class="hijos-grid" *ngIf="!loading() && hijos().length > 0">
+    <div class="hijo-card" *ngFor="let h of hijos()">
+      <div class="card-top">
+        <p-avatar [label]="initials(h)" size="xlarge" shape="circle" />
+        <div class="info">
+          <h3>{{ h.usuario?.nombre }} {{ h.usuario?.apellido }}</h3>
+          <p-tag [value]="nivelLabel(h.nivel ?? '')" severity="secondary" />
+          <span class="grado">Grado {{ h.grado }} · Sección {{ h.seccion }}</span>
+        </div>
+      </div>
+      <div class="card-actions">
+        <p-button label="Notas" icon="pi pi-book" severity="secondary" size="small" (onClick)="verNotas(h.id)" />
+        <p-button label="Asistencia" icon="pi pi-calendar" severity="secondary" size="small" (onClick)="verAsistencia(h.id)" />
+        <p-button label="Pagos" icon="pi pi-credit-card" severity="secondary" size="small" (onClick)="verPagos(h.id)" />
+      </div>
+    </div>
+  </div>
+
+</div>

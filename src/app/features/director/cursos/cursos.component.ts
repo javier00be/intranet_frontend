@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed , ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -26,6 +26,7 @@ const GRADOS_POR_NIVEL: Record<string, GradoInfo[]> = {
 const NIVELES: NivelEducativo[] = ['INICIAL', 'PRIMARIA', 'SECUNDARIA'];
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-director-cursos',
   standalone: true,
   imports: [
@@ -46,7 +47,8 @@ export class DirectorCursosComponent implements OnInit {
 
   loading = signal(true);
   cursos = signal<Curso[]>([]);
-  searchTerm = '';
+  activeNiveles = signal<string[]>(['INICIAL', 'PRIMARIA', 'SECUNDARIA']);
+  searchNivel: Record<string, string> = { INICIAL: '', PRIMARIA: '', SECUNDARIA: '' };
   showModal = false;
   showConfirm = false;
   editingCurso: Curso | null = null;
@@ -66,24 +68,28 @@ export class DirectorCursosComponent implements OnInit {
     });
   }
 
+  toggleNivel(nivel: string) {
+    const current = this.activeNiveles();
+    this.activeNiveles.set(
+      current.includes(nivel) ? current.filter(n => n !== nivel) : [...current, nivel]
+    );
+  }
+
+  isNivelActive(nivel: string): boolean {
+    return this.activeNiveles().includes(nivel);
+  }
+
   hayEnNivel(nivel: string): boolean {
-    return this.cursos().some(c => c.nivel === nivel);
+    return this.isNivelActive(nivel) && this.cursos().some(c => c.nivel === nivel);
   }
 
   cursosPorNivel(nivel: string): Curso[] {
-    return this.filtrados().filter(c => c.nivel === nivel);
-  }
-
-  cursosPorGrado(nivel: string, grado: number): Curso[] {
-    return this.filtrados().filter(c => c.nivel === nivel && c.grados.includes(grado));
-  }
-
-  filtrados(): Curso[] {
-    const term = this.searchTerm.trim().toLowerCase();
-    if (!term) return this.cursos();
-    return this.cursos().filter(c =>
+    const term = (this.searchNivel[nivel] ?? '').trim().toLowerCase();
+    const base = this.cursos().filter(c => c.nivel === nivel);
+    if (!term) return base;
+    return base.filter(c =>
       c.nombre.toLowerCase().includes(term) ||
-      c.profesorNombre?.toLowerCase().includes(term)
+      c.profesorNombres?.some(n => n.toLowerCase().includes(term))
     );
   }
 
@@ -118,4 +124,7 @@ export class DirectorCursosComponent implements OnInit {
 
   nivelColor(nivel: string): string { return ({ INICIAL: '#d97706', PRIMARIA: '#6366f1', SECUNDARIA: '#059669' } as any)[nivel] ?? '#6b7280'; }
   nivelLabel(nivel: string): string { return ({ INICIAL: 'Inicial', PRIMARIA: 'Primaria', SECUNDARIA: 'Secundaria' } as any)[nivel] ?? nivel; }
+  gradoLabel(nivel: string, grado: number): string {
+    return this.GRADOS_POR_NIVEL[nivel]?.find(g => g.value === grado)?.label ?? String(grado);
+  }
 }

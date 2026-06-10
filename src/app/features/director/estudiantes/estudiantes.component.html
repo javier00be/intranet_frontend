@@ -1,0 +1,84 @@
+<p-toast />
+
+<div class="estudiantes-page">
+  <div class="page-header">
+    <div class="header-left">
+      <h2>Estudiantes</h2>
+      <span class="student-count">{{ filteredEstudiantes.length }} alumnos</span>
+    </div>
+    <div class="search-wrapper">
+      <i class="pi pi-search"></i>
+      <input
+        pInputText
+        [(ngModel)]="searchTerm"
+        placeholder="Buscar por nombre o DNI…"
+        class="search-input" />
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton-list">
+      @for (_ of [1,2,3,4,5,6]; track $index) {
+        <p-skeleton height="60px" borderRadius="12px" />
+      }
+    </div>
+  } @else {
+    <p-table
+      [value]="filteredEstudiantes"
+      [paginator]="true"
+      [rows]="15"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="{first} - {last} de {totalRecords}"
+      styleClass="student-table">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Alumno</th>
+          <th>DNI</th>
+          <th>Grado / Sección</th>
+          <th>Nivel</th>
+          <th style="width: 160px"></th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-e>
+        <tr>
+          <td>
+            <div class="student-cell">
+              <p-avatar
+                [label]="initials(e)"
+                shape="circle"
+                [style]="{ background: 'var(--accent)', color: 'white', fontWeight: '600' }" />
+              <div class="student-info">
+                <span class="student-name">{{ e.usuario?.nombre }} {{ e.usuario?.apellido }}</span>
+                <span class="student-email">{{ e.usuario?.email }}</span>
+              </div>
+            </div>
+          </td>
+          <td><span class="dni-tag">{{ e.dni ?? '—' }}</span></td>
+          <td>{{ e.grado }}° {{ e.seccion }}</td>
+          <td>
+            <p-tag [value]="nivelLabel(e.nivel ?? '')" [severity]="nivelSeverity(e.nivel ?? '')" />
+          </td>
+          <td>
+            <p-button
+              icon="pi pi-eye"
+              label="Historial"
+              size="small"
+              [outlined]="true"
+              (click)="verHistorial(e.id)" />
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="empty-state">
+            <i class="pi pi-users"></i>
+            <p>No se encontraron estudiantes</p>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</div>

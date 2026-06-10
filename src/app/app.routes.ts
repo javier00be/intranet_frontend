@@ -74,6 +74,18 @@ export const routes: Routes = [
         data: { roles: ['director'] }
       },
       {
+        path: 'director/estudiantes',
+        loadComponent: () => import('./features/director/estudiantes/estudiantes.component').then(m => m.DirectorEstudiantesComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['director'] }
+      },
+      {
+        path: 'director/estudiantes/:id',
+        loadComponent: () => import('./features/director/estudiantes/historial-estudiante/historial-estudiante.component').then(m => m.HistorialEstudianteComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['director'] }
+      },
+      {
         path: 'director/reportes',
         loadComponent: () => import('./features/director/reportes/reportes.component').then(m => m.ReportesComponent),
         canActivate: [roleGuard],
@@ -116,6 +128,44 @@ export const routes: Routes = [
         loadComponent: () => import('./features/profesor/notas/notas.component').then(m => m.NotasComponent),
         canActivate: [roleGuard],
         data: { roles: ['profesor'] }
+      },
+
+      // Rutas Padre
+      {
+        path: 'padre/dashboard',
+        loadComponent: () => import('./features/padre/dashboard/padre-dashboard.component').then(m => m.PadreDashboardComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['padre'] }
+      },
+      {
+        path: 'padre/hijos',
+        loadComponent: () => import('./features/padre/hijos/padre-hijos.component').then(m => m.PadreHijosComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['padre'] }
+      },
+      {
+        path: 'padre/calificaciones',
+        loadComponent: () => import('./features/padre/calificaciones/padre-calificaciones.component').then(m => m.PadreCalificacionesComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['padre'] }
+      },
+      {
+        path: 'padre/asistencia',
+        loadComponent: () => import('./features/padre/asistencia/padre-asistencia.component').then(m => m.PadreAsistenciaComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['padre'] }
+      },
+      {
+        path: 'padre/pagos',
+        loadComponent: () => import('./features/padre/pagos/padre-pagos.component').then(m => m.PadrePagosComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['padre'] }
+      },
+      {
+        path: 'padre/chat',
+        loadComponent: () => import('./features/padre/chat/padre-chat.component').then(m => m.PadreChatComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['padre'] }
       },
 
       // Rutas Estudiante

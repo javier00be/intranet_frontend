@@ -27,6 +27,8 @@ export const guestGuard: CanActivateFn = () => {
     router.navigate(['/director/dashboard']);
   } else if (user?.rol === 'profesor') {
     router.navigate(['/profesor/cursos']);
+  } else if (user?.rol === 'padre') {
+    router.navigate(['/padre/dashboard']);
   } else if (user?.rol === 'estudiante') {
     router.navigate(['/estudiante/cursos']);
   } else {
@@ -50,6 +52,8 @@ export const roleGuard: CanActivateFn = (route) => {
     router.navigate(['/director/dashboard']);
   } else if (user?.rol === 'profesor') {
     router.navigate(['/profesor/cursos']);
+  } else if (user?.rol === 'padre') {
+    router.navigate(['/padre/dashboard']);
   } else if (user?.rol === 'estudiante') {
     router.navigate(['/estudiante/cursos']);
   } else {

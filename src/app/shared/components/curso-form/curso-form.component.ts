@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -9,6 +9,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { Curso } from '../../../core/services/curso.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-curso-form',
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, ButtonModule, InputTextModule, SelectModule, MultiSelectModule, TextareaModule],
@@ -77,7 +78,7 @@ import { Curso } from '../../../core/services/curso.service';
     form { display: flex; flex-direction: column; gap: 0; }
 
     .form-section {
-      padding: 1.5rem 1.75rem;
+      padding: 1.5rem 1.75rem 1rem;
       display: flex;
       flex-direction: column;
       gap: 1rem;
@@ -188,8 +189,7 @@ export class CursoFormComponent implements OnInit {
     if (this.form.invalid || !this.selectedGrados.length) return;
     const val = this.form.value;
     const curso: Curso = {
-      ...(this.curso?.id         ? { id: this.curso.id }                 : {}),
-      ...(this.curso?.profesorId ? { profesorId: this.curso.profesorId } : {}),
+      ...(this.curso?.id ? { id: this.curso.id } : {}),
       nombre:      val.nombre,
       descripcion: val.descripcion || undefined,
       nivel:       val.nivel,

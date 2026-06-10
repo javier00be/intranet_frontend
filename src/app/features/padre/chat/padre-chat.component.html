@@ -1,0 +1,104 @@
+<p-toast />
+
+<div class="chat-layout">
+
+  <!-- Sidebar conversaciones -->
+  <aside class="chat-sidebar">
+    <div class="sidebar-header">
+      <h4>Conversaciones</h4>
+      <p-button icon="pi pi-plus" [text]="true" size="small" pTooltip="Nueva conversación" (onClick)="showNewChat = !showNewChat" />
+    </div>
+
+    <!-- Panel nuevo chat -->
+    <div class="new-chat-panel" *ngIf="showNewChat">
+      <p class="panel-label">Iniciar chat con un profesor</p>
+      <div
+        class="profesor-item"
+        *ngFor="let p of profesores()"
+        (click)="iniciarConProfesor(p)">
+        <p-avatar [label]="iniciales((p.usuario.nombre ?? '') + ' ' + (p.usuario.apellido ?? ''))" shape="circle" size="normal" />
+        <div>
+          <span class="name">{{ p.usuario.nombre }} {{ p.usuario.apellido }}</span>
+        </div>
+      </div>
+      <div *ngIf="profesores().length === 0" class="no-profesores">
+        <p-skeleton *ngIf="loading()" height="40px" />
+        <span *ngIf="!loading()">Sin profesores disponibles</span>
+      </div>
+    </div>
+
+    <!-- Lista de conversaciones -->
+    <div class="conv-list" *ngIf="!loading()">
+      <div
+        class="conv-item"
+        *ngFor="let c of conversaciones()"
+        [class.active]="selected()?.id === c.id"
+        (click)="selectConversacion(c)">
+        <p-avatar [label]="iniciales(otroParticipante(c))" shape="circle" />
+        <span>{{ otroParticipante(c) }}</span>
+      </div>
+      <div class="empty-conv" *ngIf="conversaciones().length === 0">
+        <i class="pi pi-comments"></i>
+        <p>Sin conversaciones todavía</p>
+      </div>
+    </div>
+
+    <div class="conv-list" *ngIf="loading()">
+      <p-skeleton *ngFor="let _ of [1,2,3]" height="56px" styleClass="mb-2" />
+    </div>
+  </aside>
+
+  <!-- Panel de mensajes -->
+  <main class="chat-main">
+
+    <!-- No conversación seleccionada -->
+    <div class="no-conv" *ngIf="!selected()">
+      <i class="pi pi-comments"></i>
+      <p>Seleccioná una conversación o iniciá una nueva</p>
+    </div>
+
+    <ng-container *ngIf="selected()">
+      <!-- Header -->
+      <div class="chat-header">
+        <p-avatar [label]="iniciales(otroParticipante(selected()!))" shape="circle" />
+        <span>{{ otroParticipante(selected()!) }}</span>
+      </div>
+
+      <!-- Mensajes -->
+      <div class="messages-area">
+        <div *ngIf="loadingMsgs()">
+          <p-skeleton *ngFor="let _ of [1,2,3]" height="48px" styleClass="mb-2" />
+        </div>
+        <div *ngIf="!loadingMsgs()">
+          <div
+            *ngFor="let msg of mensajes()"
+            class="bubble-wrap"
+            [class.mine]="isMine(msg)">
+            <div class="bubble">
+              <span class="text">{{ msg.contenido }}</span>
+              <span class="time">{{ msg.enviadoEn | date:'HH:mm' }}</span>
+            </div>
+          </div>
+          <div #messagesEnd></div>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="chat-input">
+        <input
+          pInputText
+          type="text"
+          placeholder="Escribí tu mensaje..."
+          [(ngModel)]="nuevoMensaje"
+          (keyup.enter)="send()"
+          [disabled]="sending()" />
+        <p-button
+          icon="pi pi-send"
+          [loading]="sending()"
+          [disabled]="!nuevoMensaje.trim()"
+          (onClick)="send()" />
+      </div>
+    </ng-container>
+
+  </main>
+</div>

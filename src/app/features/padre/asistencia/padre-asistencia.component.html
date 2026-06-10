@@ -1,0 +1,74 @@
+<p-toast />
+
+<div class="page-wrapper">
+
+  <!-- Selector de hijo -->
+  <div class="hijo-selector" *ngIf="!loading()">
+    <div
+      class="hijo-chip"
+      *ngFor="let h of hijos()"
+      [class.active]="selected()?.id === h.id"
+      (click)="selectHijo(h)">
+      <p-avatar [label]="initials(h)" shape="circle" size="normal" />
+      <span>{{ h.usuario?.nombre }} {{ h.usuario?.apellido }}</span>
+    </div>
+  </div>
+
+  <div class="hijo-selector" *ngIf="loading()">
+    <p-skeleton *ngFor="let _ of [1,2]" width="120px" height="40px" borderRadius="20px" />
+  </div>
+
+  <!-- Banner porcentaje -->
+  <div class="pct-banner" *ngIf="selected() && !loadingData() && pct() !== null">
+    <i class="pi pi-calendar"></i>
+    <span>Asistencia:</span>
+    <strong [style.color]="pctColor(pct()!)">{{ pct() }}%</strong>
+    <p-tag *ngIf="pct()! < 70" severity="danger" value="Bajo el mínimo requerido" />
+  </div>
+
+  <!-- Tabla asistencias -->
+  <div class="table-container" *ngIf="selected()">
+    <p-table
+      [value]="asistencias()"
+      [loading]="loadingData()"
+      [paginator]="asistencias().length > 10"
+      [rows]="10"
+      dataKey="id"
+      styleClass="p-datatable-sm">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Curso</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Observaciones</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-a>
+        <tr>
+          <td>{{ a.cursoNombre }}</td>
+          <td>{{ a.fecha | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <p-tag
+              [severity]="a.presente ? 'success' : 'danger'"
+              [value]="a.presente ? 'Presente' : 'Ausente'"
+              [icon]="a.presente ? 'pi pi-check' : 'pi pi-times'" />
+          </td>
+          <td class="obs">{{ a.observaciones || '—' }}</td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="4" class="empty-cell">No hay registros de asistencia</td></tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading() && !selected()">
+    <i class="pi pi-user"></i>
+    <p>Seleccioná un hijo para ver su asistencia.</p>
+  </div>
+
+</div>

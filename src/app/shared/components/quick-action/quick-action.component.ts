@@ -1,10 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input , ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 export type ActionColor = 'blue' | 'green' | 'orange' | 'purple' | 'red';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-quick-action',
   standalone: true,
   imports: [CommonModule, RouterModule],

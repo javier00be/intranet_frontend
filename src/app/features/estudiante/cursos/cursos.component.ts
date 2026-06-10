@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal , ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
@@ -8,6 +8,7 @@ import { CursoService, Curso } from '../../../core/services/curso.service';
 import { MatriculaService, MatriculaDTO } from '../../../core/services/matricula.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-estudiante-cursos',
   standalone: true,
   imports: [CommonModule, SkeletonModule, TagModule, ToastModule],
@@ -59,10 +60,10 @@ import { MatriculaService, MatriculaDTO } from '../../../core/services/matricula
                 }
               </div>
               <div class="card-footer">
-                @if (curso.profesorNombre) {
+                @if (curso.profesorNombres?.length) {
                   <div class="card-profesor">
                     <i class="pi pi-user"></i>
-                    <span>{{ curso.profesorNombre }}</span>
+                    <span>{{ curso.profesorNombres!.join(', ') }}</span>
                   </div>
                 } @else {
                   <span class="sin-profesor">Sin docente asignado</span>

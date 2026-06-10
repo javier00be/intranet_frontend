@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal , ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -12,6 +12,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-login',
   standalone: true,
   imports: [
@@ -48,7 +49,9 @@ export class LoginComponent {
       if (rol === 'director') {
         this.router.navigate(['/director/dashboard']);
       } else if (rol === 'profesor') {
-        this.router.navigate(['/profesor/cursos']);
+        this.router.navigate(['/profesor/dashboard']);
+      } else if (rol === 'padre') {
+        this.router.navigate(['/padre/dashboard']);
       } else if (rol === 'estudiante') {
         this.router.navigate(['/estudiante/cursos']);
       } else {
