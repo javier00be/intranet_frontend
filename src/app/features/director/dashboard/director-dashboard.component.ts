@@ -27,16 +27,13 @@ export class DirectorDashboardComponent implements OnInit {
   nombreDirector = computed(() => this.authService.user()?.nombre ?? '');
 
   ngOnInit() {
-    const user = this.authService.user();
-    if (user) {
-      this.dashboardService.get('DIRECTOR', user.id).subscribe({
-        next: (res) => {
-          this.data.set(res);
-          this.loading.set(false);
-        },
-        error: () => this.loading.set(false)
-      });
-    }
+    this.dashboardService.get().subscribe({
+      next: (res) => {
+        this.data.set(res);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false)
+    });
   }
 
   ultimasMatriculas = [

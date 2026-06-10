@@ -22,35 +22,28 @@ export type ActionColor = 'blue' | 'green' | 'orange' | 'purple' | 'red';
     :host { display: block; }
     .quick-action {
       display: flex; flex-direction: column; align-items: center;
-      padding: 1.5rem; border-radius: 12px; background: #f9fafb;
+      padding: 1.5rem; border-radius: 12px; background: var(--bg-2);
       text-decoration: none; transition: all 0.2s; cursor: pointer;
     }
-    .quick-action:hover {
-      background: #e0e7ff; transform: translateY(-2px);
-    }
+    .quick-action:hover { background: var(--accent-soft); transform: translateY(-2px); }
     .action-icon {
       width: 3rem; height: 3rem; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 0.75rem;
     }
     .action-icon i { font-size: 1.25rem; }
-    .action-icon-blue { background: #e0e7ff; }
-    .action-icon-blue i { color: #6366f1; }
-    .action-icon-green { background: #d1fae5; }
-    .action-icon-green i { color: #10b981; }
-    .action-icon-orange { background: #fef3c7; }
-    .action-icon-orange i { color: #f59e0b; }
-    .action-icon-purple { background: #ede9fe; }
-    .action-icon-purple i { color: #7c3aed; }
-    .action-icon-red { background: #ffe4e6; }
-    .action-icon-red i { color: #f43f5e; }
-    .action-label { font-weight: 600; color: #111827; margin-bottom: 0.25rem; }
-    .action-desc { font-size: 0.75rem; color: #6b7280; text-align: center; }
-
-    :host-context(.dark-mode) .quick-action { background: #1e293b; }
-    :host-context(.dark-mode) .quick-action:hover { background: #312e81; }
-    :host-context(.dark-mode) .action-label { color: #f9fafb; }
-    :host-context(.dark-mode) .action-desc { color: #9ca3af; }
+    .action-icon-blue   { background: var(--info-bg); }
+    .action-icon-blue i { color: var(--info); }
+    .action-icon-green   { background: color-mix(in srgb, var(--ok) 14%, transparent); }
+    .action-icon-green i { color: var(--ok); }
+    .action-icon-orange   { background: var(--warn-bg); }
+    .action-icon-orange i { color: var(--warn); }
+    .action-icon-purple   { background: var(--purple-bg); }
+    .action-icon-purple i { color: var(--purple); }
+    .action-icon-red   { background: var(--err-bg); }
+    .action-icon-red i { color: var(--err); }
+    .action-label { font-weight: 600; color: var(--ink); margin-bottom: 0.25rem; }
+    .action-desc  { font-size: 0.75rem; color: var(--ink-3); text-align: center; }
   `]
 })
 export class QuickActionComponent {

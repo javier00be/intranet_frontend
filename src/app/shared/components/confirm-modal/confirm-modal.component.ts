@@ -37,7 +37,7 @@ import { ModalComponent } from '../modal/modal.component';
       width: 52px;
       height: 52px;
       border-radius: 50%;
-      background: #fff1f2;
+      background: var(--err-bg);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -45,12 +45,12 @@ import { ModalComponent } from '../modal/modal.component';
 
     .confirm-icon i {
       font-size: 1.375rem;
-      color: #f43f5e;
+      color: var(--err);
     }
 
     .confirm-message {
       font-size: 0.9375rem;
-      color: #374151;
+      color: var(--ink-2);
       margin: 0;
       line-height: 1.5;
     }
@@ -61,9 +61,6 @@ import { ModalComponent } from '../modal/modal.component';
       justify-content: center;
       padding-top: 0.25rem;
     }
-
-    :host-context(.dark-mode) .confirm-icon { background: #4c0519; }
-    :host-context(.dark-mode) .confirm-message { color: #cbd5e1; }
   `]
 })
 export class ConfirmModalComponent {

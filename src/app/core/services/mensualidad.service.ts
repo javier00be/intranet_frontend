@@ -16,6 +16,8 @@ export interface MensualidadDTO {
   estadoPago: string;
   fechaVencimiento: string;
   fechaPago?: string;
+  comprobanteUrl?: string;
+  nroTransaccion?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -37,5 +39,13 @@ export class MensualidadService {
 
   pagar(id: number): Observable<MensualidadDTO> {
     return this.http.patch<MensualidadDTO>(`${this.apiUrl}/${id}/pagar`, {});
+  }
+
+  subirComprobante(id: number, nroTransaccion: string, url?: string): Observable<MensualidadDTO> {
+    return this.http.patch<MensualidadDTO>(`${this.apiUrl}/${id}/comprobante`, { nroTransaccion, url });
+  }
+
+  validarPago(id: number): Observable<MensualidadDTO> {
+    return this.http.patch<MensualidadDTO>(`${this.apiUrl}/${id}/validar`, {});
   }
 }

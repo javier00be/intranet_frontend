@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed , ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -47,8 +47,8 @@ export class DirectorCursosComponent implements OnInit {
 
   loading = signal(true);
   cursos = signal<Curso[]>([]);
-  activeNiveles = signal<string[]>(['INICIAL', 'PRIMARIA', 'SECUNDARIA']);
-  searchNivel: Record<string, string> = { INICIAL: '', PRIMARIA: '', SECUNDARIA: '' };
+  activeNivel = signal<NivelEducativo>('INICIAL');
+  searchTerm = signal('');
   showModal = false;
   showConfirm = false;
   editingCurso: Curso | null = null;
@@ -68,23 +68,18 @@ export class DirectorCursosComponent implements OnInit {
     });
   }
 
-  toggleNivel(nivel: string) {
-    const current = this.activeNiveles();
-    this.activeNiveles.set(
-      current.includes(nivel) ? current.filter(n => n !== nivel) : [...current, nivel]
-    );
+  selectNivel(nivel: NivelEducativo) {
+    this.activeNivel.set(nivel);
+    this.searchTerm.set('');
   }
 
-  isNivelActive(nivel: string): boolean {
-    return this.activeNiveles().includes(nivel);
+  countPorNivel(nivel: string): number {
+    return this.cursos().filter(c => c.nivel === nivel).length;
   }
 
-  hayEnNivel(nivel: string): boolean {
-    return this.isNivelActive(nivel) && this.cursos().some(c => c.nivel === nivel);
-  }
-
-  cursosPorNivel(nivel: string): Curso[] {
-    const term = (this.searchNivel[nivel] ?? '').trim().toLowerCase();
+  cursosActivos(): Curso[] {
+    const nivel = this.activeNivel();
+    const term = this.searchTerm().trim().toLowerCase();
     const base = this.cursos().filter(c => c.nivel === nivel);
     if (!term) return base;
     return base.filter(c =>

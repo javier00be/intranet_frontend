@@ -19,9 +19,7 @@ export class DashboardService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/api/dashboard`;
 
-  get(role: string, userId: number): Observable<DashboardData> {
-    return this.http.get<DashboardData>(this.apiUrl, {
-      params: { role: role.toUpperCase(), userId: userId.toString() }
-    });
+  get(): Observable<DashboardData> {
+    return this.http.get<DashboardData>(this.apiUrl);
   }
 }

@@ -21,12 +21,12 @@
       margin: 0;
       font-size: 1.4rem;
       font-weight: 700;
-      color: var(--ink-1);
+      color: var(--ink);
     }
 
     .student-count {
       font-size: 0.85rem;
-      color: var(--ink-4);
+      color: var(--ink-3);
       font-weight: 500;
     }
   }
@@ -71,19 +71,19 @@
   .student-name {
     font-weight: 600;
     font-size: 0.9rem;
-    color: var(--ink-1);
+    color: var(--ink);
   }
 
   .student-email {
     font-size: 0.78rem;
-    color: var(--ink-4);
+    color: var(--ink-3);
   }
 }
 
 .dni-tag {
   display: inline-block;
   padding: 2px 8px;
-  background: var(--surface-hover);
+  background: var(--bg-3);
   border-radius: 6px;
   font-size: 0.8rem;
   font-family: monospace;
@@ -101,7 +101,5 @@
     margin-bottom: 0.5rem;
   }
 
-  p {
-    margin: 0;
-  }
+  p { margin: 0; }
 }

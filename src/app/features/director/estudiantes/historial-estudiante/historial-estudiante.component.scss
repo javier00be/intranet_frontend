@@ -19,8 +19,8 @@
 
 /* ─── Student Header ─────────────────────────── */
 .student-header {
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  background: var(--card-bg);
+  border: 1px solid var(--line);
   border-radius: 16px;
   padding: 1.5rem;
 
@@ -54,7 +54,7 @@
       margin: 0 0 0.5rem;
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--ink-1);
+      color: var(--ink);
     }
 
     .student-tags {
@@ -67,7 +67,7 @@
       display: inline-block;
       padding: 3px 10px;
       border-radius: 20px;
-      background: var(--surface-hover);
+      background: var(--bg-3);
       color: var(--ink-2);
       font-size: 0.8rem;
       font-weight: 500;
@@ -91,8 +91,8 @@
 }
 
 .stat-card {
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  background: var(--card-bg);
+  border: 1px solid var(--line);
   border-radius: 12px;
   padding: 1.25rem;
   display: flex;
@@ -109,9 +109,9 @@
     font-size: 1.25rem;
     flex-shrink: 0;
 
-    &.notas    { background: #fef9c3; color: #ca8a04; }
-    &.asistencia { background: #dcfce7; color: #16a34a; }
-    &.cursos   { background: #ede9fe; color: #7c3aed; }
+    &.notas      { background: var(--warn-bg);                                    color: var(--warn); }
+    &.asistencia { background: color-mix(in srgb, var(--ok) 14%, transparent);   color: var(--ok); }
+    &.cursos     { background: var(--purple-bg); color: var(--purple); }
   }
 
   .stat-body {
@@ -123,29 +123,29 @@
   .stat-value {
     font-size: 1.6rem;
     font-weight: 700;
-    color: var(--ink-1);
+    color: var(--ink);
     line-height: 1;
   }
 
   .stat-label {
     font-size: 0.78rem;
-    color: var(--ink-4);
+    color: var(--ink-3);
     font-weight: 500;
   }
 }
 
 /* ─── Tabs ───────────────────────────────────── */
 .tab-container {
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  background: var(--card-bg);
+  border: 1px solid var(--line);
   border-radius: 12px;
   overflow: hidden;
 }
 
 .tab-header {
   display: flex;
-  border-bottom: 1px solid var(--surface-border);
-  background: var(--surface-ground);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-2);
 }
 
 .tab-btn {
@@ -167,16 +167,16 @@
   &.active {
     color: var(--accent);
     border-bottom-color: var(--accent);
-    background: var(--surface-card);
+    background: var(--card-bg);
   }
 
-  &:hover:not(.active) { color: var(--ink-1); }
+  &:hover:not(.active) { color: var(--ink); }
 }
 
 /* ─── Table overrides ────────────────────────── */
 .curso-name {
   font-weight: 500;
-  color: var(--ink-1);
+  color: var(--ink);
 }
 
 .valor-badge {
@@ -200,13 +200,4 @@
 
   i { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
   p { margin: 0; }
-}
-
-/* ─── Dark mode ──────────────────────────────── */
-.dark-mode {
-  .stat-card .stat-icon {
-    &.notas      { background: #422006; color: #fbbf24; }
-    &.asistencia { background: #052e16; color: #4ade80; }
-    &.cursos     { background: #2e1065; color: #a78bfa; }
-  }
 }

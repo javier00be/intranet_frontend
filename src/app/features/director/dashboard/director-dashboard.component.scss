@@ -15,11 +15,11 @@
   font-size: 1.75rem;
   font-weight: 700;
   margin: 0;
-  color: var(--ink-1, #111827);
+  color: var(--ink);
 }
 
 .subtitle {
-  color: var(--ink-4, #6b7280);
+  color: var(--ink-3);
   margin: 0.5rem 0 0;
 }
 
@@ -46,10 +46,10 @@
 
   i { font-size: 1.5rem; }
 
-  &.stat-icon-blue  { background: #e0e7ff; i { color: #6366f1; } }
-  &.stat-icon-green { background: #d1fae5; i { color: #10b981; } }
-  &.stat-icon-orange { background: #fef3c7; i { color: #f59e0b; } }
-  &.stat-icon-red   { background: #ffe4e6; i { color: #f43f5e; } }
+  &.stat-icon-blue   { background: var(--info-bg);                                    i { color: var(--info); } }
+  &.stat-icon-green  { background: color-mix(in srgb, var(--ok) 14%, transparent);   i { color: var(--ok); } }
+  &.stat-icon-orange { background: var(--warn-bg);                                    i { color: var(--warn); } }
+  &.stat-icon-red    { background: var(--err-bg);                                     i { color: var(--err); } }
 }
 
 .stat-details {
@@ -59,19 +59,19 @@
 
 .stat-label {
   font-size: 0.875rem;
-  color: var(--ink-4, #6b7280);
+  color: var(--ink-3);
 }
 
 .stat-value {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--ink-1, #111827);
+  color: var(--ink);
   line-height: 1.2;
 }
 
 .stat-badge {
   font-size: 0.75rem;
-  color: #f43f5e;
+  color: var(--err);
   font-weight: 600;
   margin-top: 0.25rem;
 }
@@ -88,13 +88,13 @@
   align-items: center;
   padding: 1.5rem;
   border-radius: 12px;
-  background: var(--surface-ground, #f9fafb);
+  background: var(--bg-2);
   text-decoration: none;
   transition: all 0.2s;
   cursor: pointer;
 
   &:hover {
-    background: #e0e7ff;
+    background: var(--accent-soft);
     transform: translateY(-2px);
   }
 }
@@ -110,21 +110,21 @@
 
   i { font-size: 1.25rem; }
 
-  &.action-icon-blue   { background: #e0e7ff; i { color: #6366f1; } }
-  &.action-icon-green  { background: #d1fae5; i { color: #10b981; } }
-  &.action-icon-purple { background: #ede9fe; i { color: #7c3aed; } }
-  &.action-icon-orange { background: #fef3c7; i { color: #f59e0b; } }
+  &.action-icon-blue   { background: var(--info-bg);                                  i { color: var(--info); } }
+  &.action-icon-green  { background: color-mix(in srgb, var(--ok) 14%, transparent); i { color: var(--ok); } }
+  &.action-icon-purple { background: var(--purple-bg); i { color: var(--purple); } }
+  &.action-icon-orange { background: var(--warn-bg);                                  i { color: var(--warn); } }
 }
 
 .action-label {
   font-weight: 600;
-  color: var(--ink-1, #111827);
+  color: var(--ink);
   margin-bottom: 0.25rem;
 }
 
 .action-desc {
   font-size: 0.75rem;
-  color: var(--ink-4, #6b7280);
+  color: var(--ink-3);
   text-align: center;
 }
 
@@ -147,7 +147,7 @@
   gap: 1rem;
   padding: 0.75rem;
   border-radius: 8px;
-  background: var(--surface-ground, #f9fafb);
+  background: var(--bg-2);
 }
 
 .recent-info {
@@ -158,12 +158,12 @@
 
 .recent-name {
   font-weight: 500;
-  color: var(--ink-1, #111827);
+  color: var(--ink);
 }
 
 .recent-detail {
   font-size: 0.875rem;
-  color: var(--ink-4, #6b7280);
+  color: var(--ink-3);
 }
 
 .activity-item {
@@ -183,9 +183,9 @@
 
   i { font-size: 0.875rem; }
 
-  &.pago   { background: #d1fae5; i { color: #10b981; } }
-  &.curso  { background: #e0e7ff; i { color: #6366f1; } }
-  &.usuario { background: #fef3c7; i { color: #f59e0b; } }
+  &.pago    { background: color-mix(in srgb, var(--ok) 14%, transparent); i { color: var(--ok); } }
+  &.curso   { background: var(--info-bg);                                  i { color: var(--info); } }
+  &.usuario { background: var(--warn-bg);                                  i { color: var(--warn); } }
 }
 
 .activity-info {
@@ -196,10 +196,10 @@
 
 .activity-text {
   font-size: 0.875rem;
-  color: var(--ink-1, #111827);
+  color: var(--ink);
 }
 
 .activity-time {
   font-size: 0.75rem;
-  color: var(--ink-5, #9ca3af);
+  color: var(--ink-4);
 }

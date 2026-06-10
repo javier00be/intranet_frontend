@@ -37,7 +37,7 @@ import { DialogModule } from 'primeng/dialog';
   `,
   styles: [`
     .shell {
-      background: white;
+      background: var(--card-bg);
       border-radius: 14px;
       overflow: hidden;
     }
@@ -54,14 +54,14 @@ import { DialogModule } from 'primeng/dialog';
     .shell-title {
       font-size: 1.125rem;
       font-weight: 700;
-      color: #111827;
+      color: var(--ink);
       margin: 0;
       letter-spacing: -0.01em;
     }
 
     .shell-subtitle {
       font-size: 0.8125rem;
-      color: #9ca3af;
+      color: var(--ink-4);
       margin: 0.2rem 0 0;
     }
 
@@ -69,9 +69,9 @@ import { DialogModule } from 'primeng/dialog';
       width: 32px;
       height: 32px;
       border-radius: 8px;
-      border: 1px solid #f3f4f6;
-      background: white;
-      color: #9ca3af;
+      border: 1px solid var(--line);
+      background: var(--card-bg);
+      color: var(--ink-4);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -81,13 +81,7 @@ import { DialogModule } from 'primeng/dialog';
       transition: all 0.15s;
     }
 
-    .shell-close:hover { background: #f9fafb; color: #374151; }
-
-    :host-context(.dark-mode) .shell            { background: #1e293b; }
-    :host-context(.dark-mode) .shell-title      { color: #f9fafb; }
-    :host-context(.dark-mode) .shell-subtitle   { color: #64748b; }
-    :host-context(.dark-mode) .shell-close      { background: #1e293b; border-color: #334155; color: #64748b; }
-    :host-context(.dark-mode) .shell-close:hover { background: #334155; color: #f9fafb; }
+    .shell-close:hover { background: var(--bg-2); color: var(--ink-2); }
   `]
 })
 export class ModalComponent {

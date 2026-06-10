@@ -78,35 +78,31 @@ import { MatriculaService, MatriculaDTO } from '../../../core/services/matricula
   styles: [`
     .page { padding: 1.75rem 2rem; display: flex; flex-direction: column; gap: 1.5rem; min-height: 100%; }
     .page-header { display: flex; justify-content: space-between; align-items: flex-start; }
-    .page-title { font-size: 1.625rem; font-weight: 700; color: #111827; margin: 0; letter-spacing: -0.02em; }
-    .page-subtitle { font-size: 0.875rem; color: #9ca3af; margin: 0.25rem 0 0; }
+    .page-title { font-size: 1.625rem; font-weight: 700; color: var(--ink); margin: 0; letter-spacing: -0.02em; }
+    .page-subtitle { font-size: 0.875rem; color: var(--ink-4); margin: 0.25rem 0 0; }
 
     .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
 
     .curso-card {
-      background: white; border: 1px solid #f3f4f6; border-radius: 14px;
+      background: var(--card-bg); border: 1px solid var(--line); border-radius: 14px;
       overflow: hidden; display: flex; flex-direction: column;
       transition: box-shadow 0.2s, transform 0.2s;
     }
     .curso-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); transform: translateY(-2px); }
     .card-accent { height: 3px; }
     .card-body { padding: 1rem 1.125rem 0.75rem; flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }
-    .card-nombre { font-size: 0.9375rem; font-weight: 650; color: #111827; margin: 0; line-height: 1.3; }
-    .card-desc { font-size: 0.8125rem; color: #6b7280; margin: 0; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .card-footer { padding: 0.625rem 1.125rem; border-top: 1px solid #f9fafb; }
-    .card-profesor { display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; color: #6b7280; }
+    .card-nombre { font-size: 0.9375rem; font-weight: 650; color: var(--ink); margin: 0; line-height: 1.3; }
+    .card-desc { font-size: 0.8125rem; color: var(--ink-3); margin: 0; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .card-footer { padding: 0.625rem 1.125rem; border-top: 1px solid var(--bg-2); }
+    .card-profesor { display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; color: var(--ink-3); }
     .card-profesor i { font-size: 0.75rem; }
-    .sin-profesor { font-size: 0.75rem; color: #d1d5db; font-style: italic; }
+    .sin-profesor { font-size: 0.75rem; color: var(--ink-4); font-style: italic; }
 
     .skeleton-card { padding: 1.25rem; min-height: 120px; }
 
     .empty-state { display: flex; flex-direction: column; align-items: center; padding: 4rem; gap: 0.75rem; }
-    .empty-state i { font-size: 2.5rem; color: #e5e7eb; }
-    .empty-state p { font-size: 0.9375rem; color: #9ca3af; margin: 0; }
-
-    :host-context(.dark-mode) .page-title, :host-context(.dark-mode) .card-nombre { color: #f9fafb; }
-    :host-context(.dark-mode) .curso-card { background: #1e293b; border-color: #334155; }
-    :host-context(.dark-mode) .card-footer { border-color: #334155; }
+    .empty-state i { font-size: 2.5rem; color: var(--line); }
+    .empty-state p { font-size: 0.9375rem; color: var(--ink-4); margin: 0; }
   `]
 })
 export class EstudianteCursosComponent implements OnInit {

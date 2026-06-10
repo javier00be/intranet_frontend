@@ -11,9 +11,9 @@
   align-items: center;
 }
 
-.title-section h1 { font-size: 1.75rem; margin: 0; color: #111827; }
-.subtitle { color: #6b7280; margin: 0.25rem 0 0; }
-.actions { display: flex; gap: 0.75rem; }
+.title-section h1 { font-size: 1.75rem; margin: 0; color: var(--ink); }
+.subtitle { color: var(--ink-3); margin: 0.25rem 0 0; }
+.actions  { display: flex; gap: 0.75rem; }
 
 .padre-cell { display: flex; align-items: center; gap: 1rem; }
 
@@ -22,8 +22,8 @@
   flex-direction: column;
 }
 
-.padre-name { font-weight: 600; color: #111827; }
-.padre-email { font-size: 0.75rem; color: #6b7280; }
+.padre-name  { font-weight: 600; color: var(--ink); }
+.padre-email { font-size: 0.75rem; color: var(--ink-3); }
 .table-actions { display: flex; gap: 0.15rem; }
 
 .hijo-body {
@@ -33,14 +33,14 @@
   gap: 1rem;
 }
 
-.hijo-hint { font-size: 0.8125rem; color: #9ca3af; margin: 0; }
+.hijo-hint { font-size: 0.8125rem; color: var(--ink-4); margin: 0; }
 
 .hijo-field {
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
 
-  label { font-size: 0.8125rem; font-weight: 500; color: #374151; }
+  label { font-size: 0.8125rem; font-weight: 500; color: var(--ink-2); }
   input { width: 100%; border-radius: 8px; font-size: 0.875rem; }
 }
 
@@ -50,8 +50,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  background: #e0e7ff;
-  color: #4338ca;
+  background: var(--info-bg);
+  color: var(--info);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 0.2rem 0.6rem;
@@ -62,7 +62,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #6366f1;
+  color: var(--info);
   padding: 0;
   display: flex;
   align-items: center;
@@ -74,12 +74,4 @@
   justify-content: flex-end;
   gap: 0.5rem;
   padding-top: 0.5rem;
-}
-
-:host-context(.dark-mode) {
-  .title-section h1,
-  .padre-name { color: #f9fafb; }
-
-  .hijo-field label { color: #cbd5e1; }
-  .hijo-chip { background: #312e81; color: #a5b4fc; }
 }

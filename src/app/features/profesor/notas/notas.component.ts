@@ -304,7 +304,7 @@ export class NotasComponent implements OnInit {
 
     this.loading.set(true);
     forkJoin({
-      estudiantes: this.estudianteService.getByNivelAndGrado(curso.nivel, curso.grados?.[0] ?? 1),
+      estudiantes: this.estudianteService.getByNivelAndGrado(curso.nivel, curso.grados?.[0] ?? 1, curso.seccion),
       calificaciones: this.estudianteService.getCalificacionesByCurso(this.selectedCursoId!)
     }).subscribe({
       next: ({ estudiantes, calificaciones }) => {

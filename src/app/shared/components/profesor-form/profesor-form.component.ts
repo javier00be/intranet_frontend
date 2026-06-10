@@ -18,13 +18,13 @@ import { DniService } from '../../../core/services/dni.service';
     <form [formGroup]="profeForm" (ngSubmit)="onSubmit()" class="form-body">
 
       @if (!editMode) {
-        <div class="flex flex-col gap-2">
-          <label class="font-semibold text-sm">
+        <div class="field">
+          <label>
             DNI
             @if (dniLoading()) {
-              <i class="pi pi-spin pi-spinner" style="color:#6366f1;font-size:0.75rem;margin-left:0.25rem"></i>
+              <i class="pi pi-spin pi-spinner field-icon accent"></i>
             } @else {
-              <i class="pi pi-info-circle" style="color:#9ca3af;font-size:0.75rem;margin-left:0.25rem"
+              <i class="pi pi-info-circle field-icon muted"
                 pTooltip="Al completar 8 dígitos se autocompletan los nombres"></i>
             }
           </label>
@@ -32,40 +32,40 @@ import { DniService } from '../../../core/services/dni.service';
             placeholder="45678901" (onComplete)="buscarDni()" />
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
-          <div class="flex flex-col gap-2">
-            <label class="font-semibold text-sm">Nombres</label>
+        <div class="row-2">
+          <div class="field">
+            <label>Nombres</label>
             <input pInputText formControlName="nombre" />
           </div>
-          <div class="flex flex-col gap-2">
-            <label class="font-semibold text-sm">Apellidos</label>
+          <div class="field">
+            <label>Apellidos</label>
             <input pInputText formControlName="apellido" />
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
-          <div class="flex flex-col gap-2">
-            <label class="font-semibold text-sm">Correo Electrónico</label>
+        <div class="row-2">
+          <div class="field">
+            <label>Correo Electrónico</label>
             <input pInputText type="email" formControlName="email" placeholder="ejemplo@colegio.edu" />
           </div>
-          <div class="flex flex-col gap-2">
-            <label class="font-semibold text-sm">Contraseña temporal</label>
+          <div class="field">
+            <label>Contraseña temporal</label>
             <p-password formControlName="password" [feedback]="false" [toggleMask]="true" styleClass="w-full" inputStyleClass="w-full" />
           </div>
         </div>
       } @else {
         <div class="info-banner">
-          <i class="pi pi-user mr-2"></i>
+          <i class="pi pi-user"></i>
           <span>{{ profesor?.usuario?.nombre }} {{ profesor?.usuario?.apellido }}</span>
         </div>
       }
 
-      <div class="flex flex-col gap-2">
-        <label class="font-semibold text-sm">Teléfono</label>
+      <div class="field">
+        <label>Teléfono</label>
         <p-inputmask mask="999-999-999" formControlName="telefono" placeholder="999-999-999" />
       </div>
 
-      <div class="flex justify-end gap-2 mt-4">
+      <div class="form-footer">
         <p-button label="Cancelar" severity="secondary" text (click)="onCancel()" />
         <p-button [label]="editMode ? 'Actualizar' : 'Registrar Profesor'" type="submit" [disabled]="profeForm.invalid" />
       </div>
@@ -79,15 +79,48 @@ import { DniService } from '../../../core/services/dni.service';
       padding: 1.5rem 1.75rem 1.75rem;
     }
 
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+    }
+
+    .field label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--ink-2);
+    }
+
+    .field-icon {
+      font-size: 0.75rem;
+      margin-left: 0.25rem;
+    }
+    .field-icon.accent { color: var(--accent); }
+    .field-icon.muted  { color: var(--ink-4); }
+
     .info-banner {
-      background: #f0f4ff;
-      border: 1px solid #c7d2fe;
+      background: var(--accent-soft);
+      border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
       border-radius: 8px;
       padding: 0.75rem 1rem;
       display: flex;
       align-items: center;
-      color: #3730a3;
+      gap: 0.5rem;
+      color: var(--accent);
       font-weight: 500;
+    }
+
+    .form-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
     }
 
     :host ::ng-deep input.p-inputtext,

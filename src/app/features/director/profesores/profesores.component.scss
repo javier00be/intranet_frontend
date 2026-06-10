@@ -11,8 +11,8 @@
   align-items: center;
 }
 
-.title-section h1 { font-size: 1.75rem; margin: 0; color: #111827; }
-.subtitle { color: #6b7280; margin: 0.25rem 0 0; font-size: 0.875rem; }
+.title-section h1 { font-size: 1.75rem; margin: 0; color: var(--ink); }
+.subtitle { color: var(--ink-3); margin: 0.25rem 0 0; font-size: 0.875rem; }
 
 .profe-cell { display: flex; align-items: center; gap: 1rem; }
 
@@ -21,16 +21,16 @@
   flex-direction: column;
 }
 
-.profe-name { font-weight: 600; color: #111827; }
-.profe-email { font-size: 0.75rem; color: #6b7280; }
-.contact { font-size: 0.875rem; color: #6b7280; display: flex; align-items: center; gap: 0.375rem; }
+.profe-name  { font-weight: 600; color: var(--ink); }
+.profe-email { font-size: 0.75rem; color: var(--ink-3); }
+.contact     { font-size: 0.875rem; color: var(--ink-3); display: flex; align-items: center; gap: 0.375rem; }
 
 .cursos-count {
   font-size: 0.8125rem;
   font-weight: 500;
-  color: #6366f1;
+  color: var(--accent);
 
-  &.none { color: #d1d5db; }
+  &.none { color: var(--ink-4); }
 }
 
 .table-actions { display: flex; gap: 0.15rem; }
@@ -45,42 +45,61 @@
   cursor: pointer;
   transition: background 0.12s;
 
-  &:hover { background: #f9fafb; }
-  &.selected { background: #f5f3ff; }
+  &:hover   { background: var(--bg-2); }
+  &.selected { background: var(--accent-soft); }
 }
 
-.curso-row-info { display: flex; flex-direction: column; gap: 0.125rem; flex: 1; }
-.curso-row-nombre { font-size: 0.875rem; font-weight: 500; color: #111827; }
+.curso-row-info   { display: flex; flex-direction: column; gap: 0.125rem; flex: 1; }
+.curso-row-nombre { font-size: 0.875rem; font-weight: 500; color: var(--ink); }
 
 .curso-row-meta {
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: var(--ink-4);
   display: flex;
   align-items: center;
   gap: 0.375rem;
 }
 
-.nivel-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.otro-prof { color: #fbbf24; }
-.empty-msg { padding: 2rem; text-align: center; color: #9ca3af; font-size: 0.875rem; }
+.nivel-dot     { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.nivel-dot-big { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.otro-prof  { color: var(--warn); }
+.empty-msg  { padding: 2rem; text-align: center; color: var(--ink-4); font-size: 0.875rem; }
+
+.nivel-group { }
+
+.nivel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.75rem;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.nivel-title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-2);
+}
+
+.nivel-count {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--ink-4);
+}
 
 .asignar-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.875rem 1.75rem;
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid var(--line);
 }
 
-.selected-count { font-size: 0.8125rem; color: #6b7280; }
-.footer-btns { display: flex; gap: 0.5rem; }
-
-:host-context(.dark-mode) {
-  .title-section h1,
-  .profe-name,
-  .curso-row-nombre { color: #f9fafb; }
-
-  .curso-row:hover   { background: #334155; }
-  .curso-row.selected { background: #312e81; }
-  .asignar-footer    { border-color: #334155; }
-}
+.selected-count { font-size: 0.8125rem; color: var(--ink-3); }
+.footer-btns    { display: flex; gap: 0.5rem; }

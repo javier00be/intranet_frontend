@@ -43,14 +43,26 @@ export class EstudianteService {
   private http = inject(HttpClient);
   private base = `${environment.apiUrl}/api`;
 
+  getMiPerfil(): Observable<EstudianteDTO> {
+    return this.http.get<EstudianteDTO>(`${this.base}/estudiantes/me`);
+  }
+
+  getMisNotas(): Observable<CalificacionDTO[]> {
+    return this.http.get<CalificacionDTO[]>(`${this.base}/calificaciones/mis-notas`);
+  }
+
+  getMiAsistencia(): Observable<AsistenciaDTO[]> {
+    return this.http.get<AsistenciaDTO[]>(`${this.base}/asistencias/mi-asistencia`);
+  }
+
   getAll(): Observable<EstudianteDTO[]> {
     return this.http.get<EstudianteDTO[]>(`${this.base}/estudiantes`);
   }
 
-  getByNivelAndGrado(nivel: string, grado: number): Observable<EstudianteDTO[]> {
-    return this.http.get<EstudianteDTO[]>(`${this.base}/estudiantes`, {
-      params: { nivel, grado: grado.toString() }
-    });
+  getByNivelAndGrado(nivel: string, grado: number, seccion?: string): Observable<EstudianteDTO[]> {
+    const params: Record<string, string> = { nivel, grado: grado.toString() };
+    if (seccion) params['seccion'] = seccion;
+    return this.http.get<EstudianteDTO[]>(`${this.base}/estudiantes`, { params });
   }
 
   getById(id: number): Observable<EstudianteDTO> {

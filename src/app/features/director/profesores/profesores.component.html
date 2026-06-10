@@ -93,23 +93,31 @@
         <div class="flex justify-center p-8"><p-progressspinner styleClass="w-10 h-10" /></div>
       } @else {
         <div class="cursos-list">
-          @if (todosLosCursos.length === 0) {
+          @if (cursosPorNivel.length === 0) {
             <p class="empty-msg">No hay cursos creados todavía.</p>
           }
-          @for (curso of todosLosCursos; track curso.id) {
-            <label class="curso-row" [class.selected]="isCursoSelected(curso.id!)">
-              <p-checkbox [binary]="true" [ngModel]="isCursoSelected(curso.id!)" (ngModelChange)="toggleCurso(curso, $event)" />
-              <div class="curso-row-info">
-                <span class="curso-row-nombre">{{ curso.nombre }}</span>
-                <span class="curso-row-meta">
-                  <span class="nivel-dot" [style.background]="nivelColor(curso.nivel)"></span>
-                  {{ nivelLabel(curso.nivel) }} · {{ curso.grados.join('°, ') }}° {{ curso.seccion ?? '' }}
-                  @if (curso.profesorIds?.some(id => id !== selectedProfe?.id)) {
-                    <span class="otro-prof"> · con otro docente</span>
-                  }
-                </span>
+          @for (grupo of cursosPorNivel; track grupo.nivel) {
+            <div class="nivel-group">
+              <div class="nivel-header">
+                <span class="nivel-dot-big" [style.background]="grupo.color"></span>
+                <span class="nivel-title">{{ grupo.label }}</span>
+                <span class="nivel-count">{{ grupo.cursos.length }} curso{{ grupo.cursos.length !== 1 ? 's' : '' }}</span>
               </div>
-            </label>
+              @for (curso of grupo.cursos; track curso.id) {
+                <label class="curso-row" [class.selected]="isCursoSelected(curso.id!)">
+                  <p-checkbox [binary]="true" [ngModel]="isCursoSelected(curso.id!)" (ngModelChange)="toggleCurso(curso, $event)" />
+                  <div class="curso-row-info">
+                    <span class="curso-row-nombre">{{ curso.nombre }}</span>
+                    <span class="curso-row-meta">
+                      {{ curso.grados.join('°, ') }}° {{ curso.seccion ?? '' }}
+                      @if (curso.profesorIds?.some(id => id !== selectedProfe?.id)) {
+                        <span class="otro-prof"> · con otro docente</span>
+                      }
+                    </span>
+                  </div>
+                </label>
+              }
+            </div>
           }
         </div>
 

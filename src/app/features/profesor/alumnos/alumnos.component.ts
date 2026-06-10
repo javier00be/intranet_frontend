@@ -132,7 +132,7 @@ export class AlumnosComponent implements OnInit {
     if (!curso) return;
 
     this.loadingStudents.set(true);
-    this.estudianteService.getByNivelAndGrado(curso.nivel, curso.grados?.[0] ?? 1).subscribe({
+    this.estudianteService.getByNivelAndGrado(curso.nivel, curso.grados?.[0] ?? 1, curso.seccion).subscribe({
       next: (data) => { this.estudiantes.set(data); this.loadingStudents.set(false); },
       error: () => this.loadingStudents.set(false)
     });

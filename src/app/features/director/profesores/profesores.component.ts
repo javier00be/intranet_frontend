@@ -129,6 +129,17 @@ export class ProfesoresComponent implements OnInit {
     });
   }
 
+  get cursosPorNivel(): { nivel: string; label: string; color: string; cursos: Curso[] }[] {
+    const order = [
+      { nivel: 'INICIAL',    label: 'Inicial',    color: '#f59e0b' },
+      { nivel: 'PRIMARIA',   label: 'Primaria',   color: '#6366f1' },
+      { nivel: 'SECUNDARIA', label: 'Secundaria', color: '#10b981' },
+    ];
+    return order
+      .map(n => ({ ...n, cursos: this.todosLosCursos.filter(c => c.nivel === n.nivel) }))
+      .filter(n => n.cursos.length > 0);
+  }
+
   getIniciales(profe: Profesor): string { return `${profe.usuario?.nombre?.[0] ?? ''}${profe.usuario?.apellido?.[0] ?? ''}`.toUpperCase() || '?'; }
   nivelColor(nivel: string): string { return ({ INICIAL: '#f59e0b', PRIMARIA: '#6366f1', SECUNDARIA: '#10b981' } as any)[nivel] ?? '#9ca3af'; }
   nivelLabel(nivel: string): string { return ({ INICIAL: 'Inicial', PRIMARIA: 'Primaria', SECUNDARIA: 'Secundaria' } as any)[nivel] ?? nivel; }

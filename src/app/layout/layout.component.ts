@@ -25,8 +25,11 @@ interface MenuItem {
   template: `
     <div class="layout" [class.dark-mode]="themeService.darkMode()">
 
+      <!-- Mobile overlay -->
+      <div class="sidebar-overlay" [class.active]="mobileMenuOpen()" (click)="closeMobileMenu()"></div>
+
       <!-- Sidebar -->
-      <aside class="sidebar" [class.collapsed]="sidebarCollapsed()">
+      <aside class="sidebar" [class.collapsed]="sidebarCollapsed()" [class.mobile-open]="mobileMenuOpen()">
         <div class="sidebar-header">
           @if (!sidebarCollapsed()) {
             <div class="logo">
@@ -101,6 +104,10 @@ interface MenuItem {
       <!-- Main -->
       <main class="main-content">
         <header class="topbar">
+          <button class="icon-btn hamburger-btn" (click)="toggleMobileMenu()" title="Menú">
+            <i class="pi pi-bars"></i>
+          </button>
+
           <div class="topbar-title">
             <div class="page-title">{{ currentPageTitle() }}</div>
           </div>
@@ -136,12 +143,16 @@ export class LayoutComponent {
   private router = inject(Router);
 
   sidebarCollapsed = signal(false);
+  mobileMenuOpen = signal(false);
   private currentUrl = signal(this.router.url);
 
   constructor() {
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd)
-    ).subscribe(e => this.currentUrl.set((e as NavigationEnd).urlAfterRedirects));
+    ).subscribe(e => {
+      this.currentUrl.set((e as NavigationEnd).urlAfterRedirects);
+      this.mobileMenuOpen.set(false);
+    });
   }
 
   menuItems = computed<MenuItem[]>(() => {
@@ -243,6 +254,14 @@ export class LayoutComponent {
 
   toggleSidebar(): void {
     this.sidebarCollapsed.update(v => !v);
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen.update(v => !v);
+  }
+
+  closeMobileMenu(): void {
+    this.mobileMenuOpen.set(false);
   }
 
   logout(): void {
