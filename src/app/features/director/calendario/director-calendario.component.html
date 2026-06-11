@@ -1,0 +1,73 @@
+<div class="page">
+  <p-toast />
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Calendario Institucional</h1>
+      <p class="page-subtitle">Hacé clic en un día para crear un evento</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="cal-skeleton"></div>
+  } @else {
+    <div class="cal-wrapper">
+      <full-calendar [options]="calendarOptions()" />
+    </div>
+  }
+
+  <!-- Modal crear / editar -->
+  <app-modal
+    [(visible)]="showModal"
+    [title]="editingId ? 'Editar evento' : 'Nuevo evento'"
+    width="480px">
+    @if (showModal) {
+      <div class="evento-form">
+        <div class="field">
+          <label>Título <span class="req">*</span></label>
+          <input pInputText [(ngModel)]="form.titulo" placeholder="Ej: Día del maestro" />
+        </div>
+        <div class="field">
+          <label>Descripción</label>
+          <textarea pTextarea [(ngModel)]="form.descripcion" rows="3" placeholder="Detalle opcional"></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Desde</label>
+            <input pInputText type="datetime-local" [(ngModel)]="form.fechaInicio" />
+          </div>
+          <div class="field">
+            <label>Hasta</label>
+            <input pInputText type="datetime-local" [(ngModel)]="form.fechaFin" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Color</label>
+          <div class="color-row">
+            @for (c of ['#6366f1','#10b981','#f59e0b','#f43f5e','#3b82f6','#8b5cf6']; track c) {
+              <button class="color-dot" [style.background]="c"
+                [class.selected]="form.color === c"
+                (click)="form.color = c"></button>
+            }
+          </div>
+        </div>
+        <div class="form-footer">
+          @if (editingId) {
+            <p-button label="Eliminar" severity="danger" [text]="true"
+              icon="pi pi-trash" (click)="confirmDelete()" />
+          }
+          <p-button label="Cancelar" severity="secondary" [text]="true" (click)="showModal = false" />
+          <p-button label="Guardar" icon="pi pi-check" (click)="save()" />
+        </div>
+      </div>
+    }
+  </app-modal>
+
+  <app-confirm-modal
+    [(visible)]="showConfirm"
+    title="Eliminar evento"
+    message="¿Eliminar este evento del calendario?"
+    confirmLabel="Eliminar"
+    (confirm)="executeDelete()"
+    (cancel)="showConfirm = false" />
+</div>

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
+import { ButtonModule, ButtonSeverity } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { AvatarModule } from 'primeng/avatar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -43,6 +43,7 @@ export class ProfesoresComponent implements OnInit {
   displayCursos = false;
   displayConfirm = false;
   pendingProfe: Profesor | null = null;
+  pendingAction: 'desactivar' | 'reactivar' = 'desactivar';
   isLoading = signal(true);
   loadingCursos = signal(false);
   guardandoCursos = signal(false);
@@ -116,18 +117,28 @@ export class ProfesoresComponent implements OnInit {
     });
   }
 
-  onDeleteProfe(id: number) {
-    this.pendingProfe = this.profesores.find(p => p.id === id) ?? null;
+  onToggleActivoProfe(profe: Profesor) {
+    this.pendingProfe = profe;
+    this.pendingAction = profe.activo !== false ? 'desactivar' : 'reactivar';
     this.displayConfirm = true;
   }
 
-  executeDelete() {
+  executeAction() {
     if (!this.pendingProfe?.id) return;
-    this.profesorService.delete(this.pendingProfe.id).subscribe({
-      next: () => { this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Profesor desactivado' }); this.pendingProfe = null; this.loadAll(); },
-      error: () => { this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo desactivar' }); }
+    const op = this.pendingAction === 'desactivar'
+      ? this.profesorService.delete(this.pendingProfe.id)
+      : this.profesorService.reactivate(this.pendingProfe.id);
+    op.subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: `Profesor ${this.pendingAction === 'desactivar' ? 'desactivado' : 'reactivado'}` });
+        this.pendingProfe = null;
+        this.loadAll();
+      },
+      error: () => { this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo completar la acción' }); }
     });
   }
+
+  get confirmSev(): ButtonSeverity { return this.pendingAction === 'desactivar' ? 'danger' : 'success'; }
 
   get cursosPorNivel(): { nivel: string; label: string; color: string; cursos: Curso[] }[] {
     const order = [

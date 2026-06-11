@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
+import { ButtonModule, ButtonSeverity } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
@@ -53,6 +53,7 @@ export class DirectorCursosComponent implements OnInit {
   showConfirm = false;
   editingCurso: Curso | null = null;
   pendingCurso: Curso | null = null;
+  pendingAction: 'desactivar' | 'reactivar' = 'desactivar';
   anioActual = new Date().getFullYear();
 
   ngOnInit() { this.loadCursos(); }
@@ -103,19 +104,28 @@ export class DirectorCursosComponent implements OnInit {
     });
   }
 
-  onDelete(curso: Curso) { this.pendingCurso = curso; this.showConfirm = true; }
+  onToggleActivo(curso: Curso) {
+    this.pendingCurso = curso;
+    this.pendingAction = curso.activo !== false ? 'desactivar' : 'reactivar';
+    this.showConfirm = true;
+  }
 
-  executeDelete() {
+  executeAction() {
     if (!this.pendingCurso?.id) return;
-    this.cursoService.delete(this.pendingCurso.id).subscribe({
+    const op = this.pendingAction === 'desactivar'
+      ? this.cursoService.delete(this.pendingCurso.id)
+      : this.cursoService.reactivate(this.pendingCurso.id);
+    op.subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Curso desactivado' });
+        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: `Curso ${this.pendingAction === 'desactivar' ? 'desactivado' : 'reactivado'}` });
         this.pendingCurso = null;
         this.loadCursos();
       },
-      error: () => this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo desactivar' })
+      error: () => this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo completar la acción' })
     });
   }
+
+  get confirmSev(): ButtonSeverity { return this.pendingAction === 'desactivar' ? 'danger' : 'success'; }
 
   nivelColor(nivel: string): string { return ({ INICIAL: '#d97706', PRIMARIA: '#6366f1', SECUNDARIA: '#059669' } as any)[nivel] ?? '#6b7280'; }
   nivelLabel(nivel: string): string { return ({ INICIAL: 'Inicial', PRIMARIA: 'Primaria', SECUNDARIA: 'Secundaria' } as any)[nivel] ?? nivel; }

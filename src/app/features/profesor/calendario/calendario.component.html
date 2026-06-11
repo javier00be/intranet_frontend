@@ -1,0 +1,30 @@
+<div class="page">
+  <p-toast />
+
+  @if (loading()) {
+    <div class="cal-skeleton"></div>
+  } @else {
+    <div class="cal-wrapper">
+      <full-calendar [options]="calendarOptions()" />
+    </div>
+  }
+
+  <app-modal [(visible)]="showDetail" [title]="selectedEvento?.titulo ?? ''" width="420px">
+    @if (showDetail && selectedEvento) {
+      <div class="detail-body">
+        @if (selectedEvento.descripcion) {
+          <p class="detail-desc">{{ selectedEvento.descripcion }}</p>
+        }
+        <div class="detail-dates">
+          <span><i class="pi pi-calendar"></i> {{ selectedEvento.fechaInicio | date:'dd/MM/yyyy HH:mm' }}</span>
+          @if (selectedEvento.fechaFin) {
+            <span><i class="pi pi-arrow-right"></i> {{ selectedEvento.fechaFin | date:'dd/MM/yyyy HH:mm' }}</span>
+          }
+        </div>
+        <div class="detail-footer">
+          <p-button label="Cerrar" severity="secondary" [text]="true" (click)="showDetail = false" />
+        </div>
+      </div>
+    }
+  </app-modal>
+</div>

@@ -25,6 +25,7 @@
 .padre-name  { font-weight: 600; color: var(--ink); }
 .padre-email { font-size: 0.75rem; color: var(--ink-3); }
 .table-actions { display: flex; gap: 0.15rem; }
+.row-inactivo  { opacity: 0.45; }
 
 .hijo-body {
   padding: 1.5rem 1.75rem;

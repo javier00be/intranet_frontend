@@ -24,7 +24,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-profe>
-        <tr>
+        <tr [class.row-inactivo]="profe.activo === false">
           <td>
             <div class="profe-cell">
               <p-avatar [label]="getIniciales(profe)" shape="circle" size="large"
@@ -45,7 +45,11 @@
             <div class="table-actions">
               <p-button icon="pi pi-book" severity="info" rounded text (click)="showCursosDialog(profe)" pTooltip="Asignar cursos" tooltipPosition="top" />
               <p-button icon="pi pi-pencil" severity="secondary" rounded text (click)="showEditDialog(profe)" pTooltip="Editar" tooltipPosition="top" />
-              <p-button icon="pi pi-ban" severity="danger" rounded text (click)="onDeleteProfe(profe.id!)" pTooltip="Desactivar" tooltipPosition="top" />
+              @if (profe.activo !== false) {
+                <p-button icon="pi pi-ban" severity="danger" rounded text (click)="onToggleActivoProfe(profe)" pTooltip="Desactivar" tooltipPosition="top" />
+              } @else {
+                <p-button icon="pi pi-check-circle" severity="success" rounded text (click)="onToggleActivoProfe(profe)" pTooltip="Reactivar" tooltipPosition="top" />
+              }
             </div>
           </td>
         </tr>
@@ -76,10 +80,11 @@
   <!-- Modal confirmar desactivación -->
   <app-confirm-modal
     [(visible)]="displayConfirm"
-    title="Desactivar profesor"
-    [message]="'¿Desactivar a ' + (pendingProfe?.usuario?.nombre ?? '') + ' ' + (pendingProfe?.usuario?.apellido ?? '') + '? Ya no aparecerá en el sistema.'"
-    confirmLabel="Desactivar"
-    (confirm)="executeDelete()"
+    [title]="pendingAction === 'desactivar' ? 'Desactivar profesor' : 'Reactivar profesor'"
+    [message]="(pendingAction === 'desactivar' ? '¿Desactivar a ' : '¿Reactivar a ') + (pendingProfe?.usuario?.nombre ?? '') + ' ' + (pendingProfe?.usuario?.apellido ?? '') + '?'"
+    [confirmLabel]="pendingAction === 'desactivar' ? 'Desactivar' : 'Reactivar'"
+    [confirmSeverity]="confirmSev"
+    (confirm)="executeAction()"
     (cancel)="displayConfirm = false" />
 
   <!-- Modal asignar cursos -->

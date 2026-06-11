@@ -30,7 +30,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-padre>
-        <tr>
+        <tr [class.row-inactivo]="padre.activo === false">
           <td>
             <div class="padre-cell">
               <p-avatar [label]="getIniciales(padre)" shape="circle" size="large"
@@ -52,8 +52,13 @@
                 (click)="showEditDialog(padre)" pTooltip="Editar" />
               <p-button icon="pi pi-link" severity="info" rounded text
                 (click)="showAsignarHijoDialog(padre)" pTooltip="Asignar hijo" />
-              <p-button icon="pi pi-ban" severity="danger" rounded text
-                (click)="onDeletePadre(padre.id!)" pTooltip="Desactivar" />
+              @if (padre.activo !== false) {
+                <p-button icon="pi pi-ban" severity="danger" rounded text
+                  (click)="onToggleActivoPadre(padre)" pTooltip="Desactivar" />
+              } @else {
+                <p-button icon="pi pi-check-circle" severity="success" rounded text
+                  (click)="onToggleActivoPadre(padre)" pTooltip="Reactivar" />
+              }
             </div>
           </td>
         </tr>
@@ -69,10 +74,11 @@
   <!-- Modal confirmar desactivación -->
   <app-confirm-modal
     [(visible)]="displayConfirm"
-    title="Desactivar padre de familia"
-    [message]="'¿Desactivar a ' + (pendingPadre?.usuario?.nombre ?? '') + ' ' + (pendingPadre?.usuario?.apellido ?? '') + '? Ya no aparecerá en el sistema.'"
-    confirmLabel="Desactivar"
-    (confirm)="executeDelete()"
+    [title]="pendingAction === 'desactivar' ? 'Desactivar padre de familia' : 'Reactivar padre de familia'"
+    [message]="(pendingAction === 'desactivar' ? '¿Desactivar a ' : '¿Reactivar a ') + (pendingPadre?.usuario?.nombre ?? '') + ' ' + (pendingPadre?.usuario?.apellido ?? '') + '?'"
+    [confirmLabel]="pendingAction === 'desactivar' ? 'Desactivar' : 'Reactivar'"
+    [confirmSeverity]="confirmSev"
+    (confirm)="executeAction()"
     (cancel)="displayConfirm = false" />
 
   <!-- Modal Crear -->

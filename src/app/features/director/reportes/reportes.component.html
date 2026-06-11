@@ -10,40 +10,71 @@
     </div>
   </div>
 
-  <div class="charts-grid">
-    <p-card header="Rendimiento Académico por Grado">
-      <p-chart type="bar" [data]="performanceData" [options]="chartOptions" />
-    </p-card>
+  @if (loading()) {
+    <div class="charts-grid">
+      <p-card header="Rendimiento Académico por Grado">
+        <p-skeleton height="280px" />
+      </p-card>
+      <p-card header="Distribución de Pagos">
+        <p-skeleton height="280px" />
+      </p-card>
+    </div>
+    <div class="secondary-grid">
+      <p-card header="Asistencia Mensual" styleClass="flex-1">
+        <p-skeleton height="280px" />
+      </p-card>
+      <p-card header="Alertas de Rendimiento Bajo" styleClass="flex-1">
+        <p-skeleton height="280px" />
+      </p-card>
+    </div>
+  } @else {
+    <div class="charts-grid">
+      <p-card header="Rendimiento Académico por Grado">
+        @if (performanceData()?.labels?.length) {
+          <p-chart type="bar" [data]="performanceData()" [options]="chartOptions" />
+        } @else {
+          <p class="empty-msg">Sin datos de calificaciones aún.</p>
+        }
+      </p-card>
 
-    <p-card header="Distribución de Pagos">
-      <p-chart type="doughnut" [data]="paymentDistData" [options]="chartOptions" />
-    </p-card>
-  </div>
+      <p-card header="Distribución de Pagos">
+        <p-chart type="doughnut" [data]="paymentDistData()" [options]="doughnutOptions" />
+      </p-card>
+    </div>
 
-  <div class="secondary-grid">
-    <p-card header="Asistencia Mensual" styleClass="flex-1">
-      <p-chart type="line" [data]="attendanceData" [options]="chartOptions" />
-    </p-card>
+    <div class="secondary-grid">
+      <p-card header="Asistencia Mensual" styleClass="flex-1">
+        @if (attendanceData()?.labels?.length) {
+          <p-chart type="line" [data]="attendanceData()" [options]="chartOptions" />
+        } @else {
+          <p class="empty-msg">Sin datos de asistencia aún.</p>
+        }
+      </p-card>
 
-    <p-card header="Alertas de Rendimiento Bajo" styleClass="flex-1">
-      <p-table [value]="alertas" styleClass="p-datatable-sm">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Estudiante</th>
-            <th>Grado</th>
-            <th>Promedio</th>
-            <th>Estado</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-alerta>
-          <tr>
-            <td>{{ alerta.nombre }}</td>
-            <td>{{ alerta.grado }}</td>
-            <td><span class="font-bold text-red-500">{{ alerta.promedio }}</span></td>
-            <td><p-tag value="Riesgo" severity="danger" /></td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </p-card>
-  </div>
+      <p-card header="Alertas de Rendimiento Bajo" styleClass="flex-1">
+        @if (alertas().length) {
+          <p-table [value]="alertas()" styleClass="p-datatable-sm">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Estudiante</th>
+                <th>Grado</th>
+                <th>Promedio</th>
+                <th>Estado</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-alerta>
+              <tr>
+                <td>{{ alerta.nombre }}</td>
+                <td>{{ alerta.grado }}</td>
+                <td><span class="font-bold text-red-500">{{ alerta.promedio }}</span></td>
+                <td><p-tag value="Riesgo" severity="danger" /></td>
+              </tr>
+            </ng-template>
+          </p-table>
+        } @else {
+          <p class="empty-msg">No hay estudiantes en riesgo. ¡Todo bien!</p>
+        }
+      </p-card>
+    </div>
+  }
 </div>

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output , ChangeDetectionStrategy } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
+import { ButtonSeverity } from 'primeng/button';
 import { ModalComponent } from '../modal/modal.component';
 
 @Component({
@@ -17,7 +18,7 @@ import { ModalComponent } from '../modal/modal.component';
           <p class="confirm-message">{{ message }}</p>
           <div class="confirm-footer">
             <p-button label="Cancelar" severity="secondary" [text]="true" (click)="onCancel()" />
-            <p-button [label]="confirmLabel" severity="danger" (click)="onConfirm()" />
+            <p-button [label]="confirmLabel" [severity]="confirmSeverity" (click)="onConfirm()" />
           </div>
         </div>
       }
@@ -68,6 +69,7 @@ export class ConfirmModalComponent {
   @Input() title = 'Confirmar acción';
   @Input() message = '¿Estás seguro de que querés continuar?';
   @Input() confirmLabel = 'Confirmar';
+  @Input() confirmSeverity: ButtonSeverity = 'danger';
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() confirm = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();

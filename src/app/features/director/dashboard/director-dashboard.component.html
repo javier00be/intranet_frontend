@@ -113,33 +113,49 @@
   <div class="recent-grid">
     <p-card header="Últimas Matrículas" styleClass="recent-card">
       <div class="recent-list">
-        @for (item of ultimasMatriculas; track item.nombre) {
-          <div class="recent-item">
-            <p-avatar [label]="item.iniciales" shape="circle" size="large"
-              [style]="{'background-color': item.color, 'color': 'white'}" />
-            <div class="recent-info">
-              <span class="recent-name">{{ item.nombre }}</span>
-              <span class="recent-detail">{{ item.curso }} · {{ item.fecha }}</span>
+        @if (loading()) {
+          @for (i of [1,2,3,4]; track i) {
+            <p-skeleton height="3.5rem" borderRadius="8px" />
+          }
+        } @else if (ultimasMatriculas().length === 0) {
+          <p class="empty-msg">No hay matrículas registradas.</p>
+        } @else {
+          @for (item of ultimasMatriculas(); track item.nombre) {
+            <div class="recent-item">
+              <p-avatar [label]="item.iniciales" shape="circle" size="large"
+                [style]="{'background-color': item.color, 'color': 'white'}" />
+              <div class="recent-info">
+                <span class="recent-name">{{ item.nombre }}</span>
+                <span class="recent-detail">{{ item.curso }} · {{ item.fecha }}</span>
+              </div>
+              <p-tag [value]="item.estado"
+                [severity]="item.estado === 'Confirmado' ? 'success' : 'warn'" />
             </div>
-            <p-tag [value]="item.estado"
-              [severity]="item.estado === 'Confirmado' ? 'success' : 'warn'" />
-          </div>
+          }
         }
       </div>
     </p-card>
 
     <p-card header="Actividad Reciente" styleClass="recent-card">
       <div class="activity-list">
-        @for (act of actividades; track act.descripcion) {
-          <div class="activity-item">
-            <div class="activity-icon" [ngClass]="act.tipo">
-              <i [class]="act.icono"></i>
+        @if (loading()) {
+          @for (i of [1,2,3,4,5]; track i) {
+            <p-skeleton height="2.5rem" borderRadius="8px" />
+          }
+        } @else if (actividades().length === 0) {
+          <p class="empty-msg">Sin actividad reciente.</p>
+        } @else {
+          @for (act of actividades(); track act.descripcion) {
+            <div class="activity-item">
+              <div class="activity-icon" [ngClass]="act.tipo">
+                <i [class]="act.icono"></i>
+              </div>
+              <div class="activity-info">
+                <span class="activity-text">{{ act.descripcion }}</span>
+                <span class="activity-time">{{ act.tiempo }}</span>
+              </div>
             </div>
-            <div class="activity-info">
-              <span class="activity-text">{{ act.descripcion }}</span>
-              <span class="activity-time">{{ act.tiempo }}</span>
-            </div>
-          </div>
+          }
         }
       </div>
     </p-card>

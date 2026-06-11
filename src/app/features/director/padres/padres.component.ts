@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
+import { ButtonModule, ButtonSeverity } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { AvatarModule } from 'primeng/avatar';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
@@ -39,6 +39,7 @@ export class PadresComponent implements OnInit {
   displayAsignar = false;
   displayConfirm = false;
   pendingPadre: Padre | null = null;
+  pendingAction: 'desactivar' | 'reactivar' = 'desactivar';
   isLoading = signal<boolean>(true);
   padres: Padre[] = [];
   selectedPadre: Padre | null = null;
@@ -121,21 +122,25 @@ export class PadresComponent implements OnInit {
     });
   }
 
-  onDeletePadre(id: number) {
-    this.pendingPadre = this.padres.find(p => p.id === id) ?? null;
+  onToggleActivoPadre(padre: Padre) {
+    this.pendingPadre = padre;
+    this.pendingAction = padre.activo !== false ? 'desactivar' : 'reactivar';
     this.displayConfirm = true;
   }
 
-  executeDelete() {
+  executeAction() {
     if (!this.pendingPadre?.id) return;
-    this.padreService.delete(this.pendingPadre.id).subscribe({
+    const op = this.pendingAction === 'desactivar'
+      ? this.padreService.delete(this.pendingPadre.id)
+      : this.padreService.reactivate(this.pendingPadre.id);
+    op.subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Padre desactivado' });
+        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: `Padre ${this.pendingAction === 'desactivar' ? 'desactivado' : 'reactivado'}` });
         this.pendingPadre = null;
         this.loadPadres();
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo desactivar' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo completar la acción' });
       }
     });
   }
@@ -168,6 +173,8 @@ export class PadresComponent implements OnInit {
       }
     });
   }
+
+  get confirmSev(): ButtonSeverity { return this.pendingAction === 'desactivar' ? 'danger' : 'success'; }
 
   getIniciales(padre: Padre): string {
     const n = padre.usuario?.nombre?.[0] ?? '';

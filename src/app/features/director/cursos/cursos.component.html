@@ -45,7 +45,7 @@
     @if (cursosActivos().length) {
       <div class="cards-grid">
         @for (curso of cursosActivos(); track curso.id) {
-          <div class="curso-card" [class.inactivo]="!curso.activo" [style.--nc]="nivelColor(activeNivel())">
+          <div class="curso-card" [class.inactivo]="curso.activo === false" [style.--nc]="nivelColor(activeNivel())">
             <div class="card-accent"></div>
             <div class="card-body">
               <span class="curso-nombre">{{ curso.nombre }}</span>
@@ -72,10 +72,17 @@
                 severity="secondary" size="small"
                 (click)="openEdit(curso)"
                 pTooltip="Editar" tooltipPosition="top" />
-              <p-button icon="pi pi-trash" [text]="true" [rounded]="true"
-                severity="danger" size="small"
-                (click)="onDelete(curso)"
-                pTooltip="Desactivar" tooltipPosition="top" />
+              @if (curso.activo !== false) {
+                <p-button icon="pi pi-trash" [text]="true" [rounded]="true"
+                  severity="danger" size="small"
+                  (click)="onToggleActivo(curso)"
+                  pTooltip="Desactivar" tooltipPosition="top" />
+              } @else {
+                <p-button icon="pi pi-check-circle" [text]="true" [rounded]="true"
+                  severity="success" size="small"
+                  (click)="onToggleActivo(curso)"
+                  pTooltip="Reactivar" tooltipPosition="top" />
+              }
             </div>
           </div>
         }
@@ -91,10 +98,11 @@
 
   <app-confirm-modal
     [(visible)]="showConfirm"
-    title="Desactivar curso"
-    [message]="'¿Desactivar ' + (pendingCurso?.nombre ?? '') + '?'"
-    confirmLabel="Desactivar"
-    (confirm)="executeDelete()"
+    [title]="pendingAction === 'desactivar' ? 'Desactivar curso' : 'Reactivar curso'"
+    [message]="(pendingAction === 'desactivar' ? '¿Desactivar ' : '¿Reactivar ') + (pendingCurso?.nombre ?? '') + '?'"
+    [confirmLabel]="pendingAction === 'desactivar' ? 'Desactivar' : 'Reactivar'"
+    [confirmSeverity]="confirmSev"
+    (confirm)="executeAction()"
     (cancel)="showConfirm = false" />
 
   <app-modal

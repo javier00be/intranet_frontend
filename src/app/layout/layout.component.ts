@@ -168,7 +168,8 @@ export class LayoutComponent {
         { label: 'Profesores', icon: 'pi-users',          routerLink: '/director/profesores'  },
         { label: 'Padres',     icon: 'pi-heart',          routerLink: '/director/padres'      },
         { label: 'Estudiantes', icon: 'pi-graduation-cap', routerLink: '/director/estudiantes' },
-        { label: 'Reportes',   icon: 'pi-chart-bar',      routerLink: '/director/reportes'    }
+        { label: 'Reportes',   icon: 'pi-chart-bar',      routerLink: '/director/reportes'    },
+        { label: 'Calendario', icon: 'pi-calendar',       routerLink: '/director/calendario'  }
       ];
     }
     
@@ -234,6 +235,7 @@ export class LayoutComponent {
     if (url.includes('/profesor/alumnos')) return 'Mis Alumnos';
     if (url.includes('/profesor/calendario')) return 'Calendario';
     if (url.includes('/profesor/notas')) return 'Registro de Notas';
+    if (url.includes('/director/calendario')) return 'Calendario Institucional';
     if (url.includes('/padre/hijos')) return 'Mis Hijos';
     if (url.includes('/padre/calificaciones')) return 'Notas de mis Hijos';
     if (url.includes('/padre/asistencia')) return 'Asistencia de mis Hijos';

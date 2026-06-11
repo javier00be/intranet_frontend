@@ -1,0 +1,42 @@
+<div class="page">
+  <p-toast />
+
+  <div class="legend">
+    <span class="legend-item"><span class="dot" style="background:#6366f1"></span>Eventos institucionales</span>
+    <span class="legend-item"><span class="dot" style="background:#f59e0b"></span>Tareas / entregas</span>
+  </div>
+
+  @if (loading()) {
+    <div class="cal-skeleton"></div>
+  } @else {
+    <div class="cal-wrapper">
+      <full-calendar [options]="calendarOptions()" />
+    </div>
+  }
+
+  <app-modal [(visible)]="showDetail" [title]="selectedDetalle?.titulo ?? ''" width="420px">
+    @if (showDetail && selectedDetalle) {
+      <div class="detail-body">
+        <p-tag
+          [value]="selectedDetalle.tipo === 'tarea' ? 'Tarea' : 'Evento'"
+          [severity]="selectedDetalle.tipo === 'tarea' ? 'warn' : 'info'" />
+
+        @if (selectedDetalle.cursoNombre) {
+          <p class="detail-curso"><i class="pi pi-book"></i> {{ selectedDetalle.cursoNombre }}</p>
+        }
+        @if (selectedDetalle.descripcion) {
+          <p class="detail-desc">{{ selectedDetalle.descripcion }}</p>
+        }
+        <div class="detail-dates">
+          <span><i class="pi pi-calendar"></i> {{ selectedDetalle.fechaInicio | date:'dd/MM/yyyy HH:mm' }}</span>
+          @if (selectedDetalle.fechaFin) {
+            <span><i class="pi pi-arrow-right"></i> {{ selectedDetalle.fechaFin | date:'dd/MM/yyyy HH:mm' }}</span>
+          }
+        </div>
+        <div class="detail-footer">
+          <p-button label="Cerrar" severity="secondary" [text]="true" (click)="showDetail = false" />
+        </div>
+      </div>
+    }
+  </app-modal>
+</div>

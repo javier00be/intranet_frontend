@@ -91,6 +91,12 @@ export const routes: Routes = [
         canActivate: [roleGuard],
         data: { roles: ['director'] }
       },
+      {
+        path: 'director/calendario',
+        loadComponent: () => import('./features/director/calendario/director-calendario.component').then(m => m.DirectorCalendarioComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['director'] }
+      },
 
       // Rutas Profesor
       {
